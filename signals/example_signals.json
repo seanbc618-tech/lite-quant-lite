@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "comment": "示例：纸面账户测试用，请改为你的标的与数量；执行前务必 --dry-run",
+  "orders": [
+    {
+      "symbol": "AAPL",
+      "side": "buy",
+      "notional": 100
+    }
+  ]
+}

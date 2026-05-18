@@ -1,0 +1,13 @@
+.venv/
+venv/
+.env
+.cache/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+logs/
+mlruns/
+*.log
+signals/KILL_SWITCH

@@ -1,0 +1,52 @@
+"""美股量化工具包。
+
+提供数据获取、回测、交易执行等功能。
+"""
+from us_quant.config import config, get_config
+from us_quant.data import (
+    CacheManager,
+    DataManager,
+    DataRequest,
+    QlibDataProvider,
+    YahooDataProvider,
+    get_data_manager,
+)
+from us_quant.logger import get_logger, init_logging_from_config, logger
+from us_quant.paths import PROJECT_ROOT, default_qlib_us_uri
+from us_quant.utils import (
+    BacktestUtils,
+    PerformanceMetrics,
+    RiskManager,
+    TechnicalIndicators,
+    format_number,
+    format_percent,
+)
+
+__version__ = "0.2.0"
+
+__all__ = [
+    # 配置
+    "config",
+    "get_config",
+    # 日志
+    "logger",
+    "get_logger",
+    "init_logging_from_config",
+    # 数据
+    "DataManager",
+    "YahooDataProvider",
+    "QlibDataProvider",
+    "CacheManager",
+    "DataRequest",
+    "get_data_manager",
+    # 路径
+    "PROJECT_ROOT",
+    "default_qlib_us_uri",
+    # 工具
+    "TechnicalIndicators",
+    "BacktestUtils",
+    "RiskManager",
+    "PerformanceMetrics",
+    "format_number",
+    "format_percent",
+]

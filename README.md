@@ -1,0 +1,65 @@
+# 美股量化本地栈
+
+本地研究 / 回测 / Alpaca 纸面交易的骨架项目，依赖 **Qlib**、**VectorBT**、**Alpaca**。详细约定见 [LOCAL_STACK.md](LOCAL_STACK.md)。
+
+**新手请先读**：[docs/快速开始.md](docs/快速开始.md)（说明：本仓库**不是**研究报告里各 GitHub 项目的 clone；`sp500` / `nasdaq100` 如何用；演示输出怎么读。）
+
+## 快速开始
+
+```bash
+cd "/Volumes/数据分区/美股自动化交易"  # 或切到你本机的项目根目录
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python scripts/download_qlib_us.py
+.venv/bin/python scripts/verify_data_sources.py
+```
+
+## 维护检查
+
+| 命令 | 说明 |
+|------|------|
+| `make smoke` | 快速确认核心库可导入并打印版本 |
+| `make health` | 本地健康检查：依赖、Qlib 数据目录、日历截止、示例信号；默认不依赖 Yahoo |
+| `make test` | 运行项目维护测试 |
+| `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
+
+`make verify` 会额外探测 Yahoo Finance，可能受 DNS、网络或 Yahoo 限流影响；本地 Qlib 研究链路是否可用，以 `make health` 和 Qlib 回测命令为准。
+
+## 回测怎么跑
+
+| 方式 | 命令 | 说明 |
+|------|------|------|
+| **VectorBT + Yahoo** | `.venv/bin/python scripts/backtest_vectorbt_baseline.py` | 双均线，按 `--split` 切 IS/OOS |
+| **Qlib 数据 + 规则基线** | `.venv/bin/python scripts/backtest_qlib_baseline.py` | 读本地 `us_data`，默认按比例切分 |
+| **Qlib 完整 ML + 回测（官方风格）** | `.venv/bin/qrun config/qlib/workflow_lightgbm_alpha158_us_nasdaq100.yaml` | LightGBM + Alpha158 + TopK 组合回测；产物在 `mlruns/` |
+
+较快迭代可用 **nasdaq100** 配置；全市场 SP500 用 `config/qlib/workflow_lightgbm_alpha158_us.yaml`（耗时更长）。
+
+**注意**：官方 `us_data` 日线常止于约 **2020-11**；工作流中回测结束日已设为 **2020-10-30**，避免 Qlib 交易日历在末端的越界错误。
+
+## 其他脚本
+
+- `scripts/alpaca_paper_executor.py`：读取 `signals/*.json` 下纸面单（需环境变量中的 Alpaca Paper Key）
+- `scripts/trade_v2.py`：新版纸面执行入口，支持 dry-run、kill-switch 和统一配置
+- `make smoke` / `make health` / `make test`：维护检查（见 Makefile）
+
+## 目录结构（摘要）
+
+```
+config/qlib/          # qrun 工作流 YAML
+scripts/              # 数据下载、回测、纸面执行
+signals/              # 示例信号 JSON
+src/us_quant/         # 共享常量（路径等）
+```
+
+## 选股（股票池 / 因子 / 规则）
+
+概念与扩展方式见 [docs/选股指南.md](docs/选股指南.md)。快速示例：按流动性粗筛（Qlib 本地数据）：
+
+```bash
+.venv/bin/python scripts/screen_liquidity_qlib.py --market nasdaq100 --top 20
+```
+
+## 研究报告
+
+仓库内 Markdown 为调研笔记，不构成投资建议。
