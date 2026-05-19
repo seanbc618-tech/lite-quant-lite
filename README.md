@@ -22,6 +22,7 @@ python3 -m venv .venv
 | `make health` | 本地健康检查：依赖、Qlib 数据目录、日历截止、示例信号；默认不依赖 Yahoo |
 | `make test` | 运行项目维护测试 |
 | `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
+| `make value-json INPUT=examples/valuation/demo_stock.json` | 离线估值探针，读取 JSON 基本面输入 |
 
 `make verify` 会额外探测 Yahoo Finance，可能受 DNS、网络或 Yahoo 限流影响；本地 Qlib 研究链路是否可用，以 `make health` 和 Qlib 回测命令为准。
 
@@ -59,6 +60,22 @@ src/us_quant/         # 共享常量（路径等）
 ```bash
 .venv/bin/python scripts/screen_liquidity_qlib.py --market nasdaq100 --top 20
 ```
+
+## 估值探针
+
+估值层使用 `valueinvest` 做轻量计算，但默认推荐先走 JSON/手工输入，避免 Yahoo Finance 限流影响研究流程：
+
+```bash
+make value-json INPUT=examples/valuation/demo_stock.json
+```
+
+也可以尝试在线 Yahoo 输入：
+
+```bash
+make value SYMBOL=AAPL
+```
+
+Yahoo 模式是 best-effort；遇到 DNS 或 rate limit 时会清楚失败，不影响 Qlib 本地研究链路。
 
 ## 研究报告
 

@@ -5,7 +5,7 @@ PY := $(VENV)/python
 PIP := $(PY) -m pip
 PYTHONPATH := PYTHONPATH=src
 
-.PHONY: install install-new data verify smoke health test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm generate-signals update-data paper-dry paper-dry-v2
+.PHONY: install install-new data verify smoke health test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm value value-json generate-signals update-data paper-dry paper-dry-v2
 
 install:
 	$(PIP) install -r requirements.txt
@@ -67,6 +67,13 @@ qrun-xgb:
 
 qrun-alstm:
 	$(VENV)/qrun config/qlib/workflow_alstm_alpha158_ndx.yaml
+
+# 估值探针
+value:
+	$(PYTHONPATH) $(PY) scripts/value_stock.py $(SYMBOL)
+
+value-json:
+	$(PYTHONPATH) $(PY) scripts/value_stock.py --source json --input-json $(INPUT)
 
 # 生成交易信号
 generate-signals:

@@ -25,6 +25,7 @@ python3 -m venv .venv
 | Qlib 美股日线 | `~/.qlib/qlib_data/us_data` | 官方示例包，来源为 Yahoo，质量以 Qlib 说明为准 |
 | Yahoo 备用 | `yfinance` / VectorBT `YFData` | 与研究报告一致，用于快速回测；注意时区多为 UTC |
 | 信号文件 | `signals/*.json` | 供纸面执行层读取 |
+| 估值 JSON | `examples/valuation/*.json` | 供离线估值探针读取，避免 Yahoo 限流 |
 
 **单一数据源原则**：同一研究任务内不要混用「未对齐复权/未对齐时区」的序列。建议：**结构化因子与 Qlib 工作流用 `us_data`**；**快速原型与参数扫描用 Yahoo + VectorBT**。
 
@@ -44,6 +45,9 @@ make health
 
 # 运行维护测试
 make test
+
+# 离线估值探针（不依赖 Yahoo）
+make value-json INPUT=examples/valuation/demo_stock.json
 
 # VectorBT：Yahoo 行情，双均线，按日期切分 IS/OOS
 .venv/bin/python scripts/backtest_vectorbt_baseline.py --symbol AAPL --split 2022-01-01
@@ -99,11 +103,27 @@ set -a && source .env && set +a   # bash/zsh 示例
 
 三层：**股票池（universe）**、**因子/模型横截面打分**、**规则初筛**。说明与示例命令见 [docs/选股指南.md](docs/选股指南.md)；规则层可参考 `scripts/screen_liquidity_qlib.py`（流动性排名）。
 
-## 6. 与仓库内研究报告的关系
+## 6. 估值能力扩展
+
+`scripts/value_stock.py` 是小范围估值探针：使用 `valueinvest` 的 Graham、DCF、Reverse DCF、Owner Earnings、Altman Z、Piotroski F 等方法，但把数据获取和估值计算分开。稳定路径是 JSON 输入：
+
+```bash
+make value-json INPUT=examples/valuation/demo_stock.json
+```
+
+在线路径可用：
+
+```bash
+make value SYMBOL=AAPL
+```
+
+该路径依赖 Yahoo Finance，可能受 DNS 或 rate limit 影响；失败时只代表在线数据源不可用，不代表估值引擎不可用。
+
+## 7. 与仓库内研究报告的关系
 
 - [量化交易模型研究报告.md](量化交易模型研究报告.md)：框架选型、风险提示；本栈避开已停更的 Zipline 作主路径。
 - [AI美股程序化交易研究报告.md](AI美股程序化交易研究报告.md)：Qlib / VectorBT / Alpaca 路径与本目录脚本一致。
 
-## 7. 免责声明
+## 8. 免责声明
 
 仅供研究与技术验证，不构成投资建议。程序化交易存在亏损与合规风险，实盘前请充分回测与纸面验证。

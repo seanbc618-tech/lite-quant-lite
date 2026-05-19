@@ -21,6 +21,14 @@ from us_quant.utils import (
     format_number,
     format_percent,
 )
+from us_quant.valuation import (
+    DEFAULT_VALUATION_METHODS,
+    ValuationMethodResult,
+    ValuationReport,
+    build_stock,
+    fetch_yahoo_stock,
+    run_valuation,
+)
 
 __version__ = "0.2.0"
 
@@ -49,4 +57,11 @@ __all__ = [
     "PerformanceMetrics",
     "format_number",
     "format_percent",
+    # 估值
+    "DEFAULT_VALUATION_METHODS",
+    "ValuationMethodResult",
+    "ValuationReport",
+    "build_stock",
+    "fetch_yahoo_stock",
+    "run_valuation",
 ]
