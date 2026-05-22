@@ -46,6 +46,9 @@ make health
 # 运行维护测试
 make test
 
+# 汇总本地 Qlib/MLflow 实验
+make report-runs
+
 # 离线估值探针（不依赖 Yahoo）
 make value-validate INPUT=examples/valuation/demo_stock.json
 make value-json INPUT=examples/valuation/demo_stock.json
@@ -75,6 +78,8 @@ make value-json INPUT=examples/valuation/demo_stock.json
 也可用 Makefile：`make qrun-ndx` / `make qrun-sp500`。
 
 **产物**：实验与指标默认写入项目根目录 **`mlruns/`**（MLflow 文件存储），已加入 `.gitignore`。
+
+**实验汇总**：`make report-runs` 会读取本机 `mlruns/` 并输出 Markdown 表，包含 IC、Rank IC、含成本年化超额收益、最大回撤、IR 等关键字段。该命令只读本地文件，不会把 `mlruns/` 纳入 Git。
 
 **日历边界**：若回测 `end_time` 取数据最后一天，部分环境下 Qlib 会在 `TopkDropoutStrategy` 回测末步触发 `IndexError` 。当前配置将 **handler / 回测 / test 段** 统一收束到 **`2020-10-30`**，请与本地数据包截止日期一致调整。
 

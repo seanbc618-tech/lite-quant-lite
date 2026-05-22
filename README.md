@@ -24,6 +24,7 @@ python3 -m venv .venv
 | `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
 | `make value-validate INPUT=examples/valuation/demo_stock.json` | 只校验估值 JSON 输入 |
 | `make value-json INPUT=examples/valuation/demo_stock.json` | 离线估值探针，读取 JSON 基本面输入 |
+| `make report-runs` | 汇总本地 `mlruns/` 中的 Qlib 实验指标 |
 
 `make verify` 会额外探测 Yahoo Finance，可能受 DNS、网络或 Yahoo 限流影响；本地 Qlib 研究链路是否可用，以 `make health` 和 Qlib 回测命令为准。
 
@@ -38,6 +39,14 @@ python3 -m venv .venv
 较快迭代可用 **nasdaq100** 配置；全市场 SP500 用 `config/qlib/workflow_lightgbm_alpha158_us.yaml`（耗时更长）。
 
 **注意**：官方 `us_data` 日线常止于约 **2020-11**；工作流中回测结束日已设为 **2020-10-30**，避免 Qlib 交易日历在末端的越界错误。
+
+已有 Qlib/MLflow 实验可用本地汇总表查看：
+
+```bash
+make report-runs
+```
+
+`mlruns/` 仍然被 `.gitignore` 忽略；该命令只读取本机实验产物，不会提交或上传实验文件。
 
 ## 其他脚本
 
