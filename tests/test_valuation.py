@@ -4,6 +4,7 @@ from us_quant.valuation import (
     DEFAULT_VALUATION_METHODS,
     build_stock,
     run_valuation,
+    validate_stock_input,
 )
 
 
@@ -68,3 +69,29 @@ def test_default_methods_are_small_probe_set():
         "altman_z",
         "piotroski_f",
     ]
+
+
+def test_validate_stock_input_accepts_fixture():
+    assert validate_stock_input(stock_fixture()) == []
+
+
+def test_validate_stock_input_reports_missing_required_fields():
+    data = stock_fixture()
+    data.pop("fcf")
+    data.pop("eps")
+
+    errors = validate_stock_input(data)
+
+    assert "missing required field: eps" in errors
+    assert "missing required field: fcf" in errors
+
+
+def test_validate_stock_input_reports_non_positive_numeric_fields():
+    data = stock_fixture()
+    data["current_price"] = 0
+    data["shares_outstanding"] = -1
+
+    errors = validate_stock_input(data)
+
+    assert "current_price must be positive" in errors
+    assert "shares_outstanding must be positive" in errors

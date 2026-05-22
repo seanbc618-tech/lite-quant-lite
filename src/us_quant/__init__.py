@@ -28,6 +28,7 @@ from us_quant.valuation import (
     build_stock,
     fetch_yahoo_stock,
     run_valuation,
+    validate_stock_input,
 )
 
 __version__ = "0.2.0"
@@ -64,4 +65,5 @@ __all__ = [
     "build_stock",
     "fetch_yahoo_stock",
     "run_valuation",
+    "validate_stock_input",
 ]

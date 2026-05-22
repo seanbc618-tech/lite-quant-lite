@@ -47,6 +47,7 @@ make health
 make test
 
 # 离线估值探针（不依赖 Yahoo）
+make value-validate INPUT=examples/valuation/demo_stock.json
 make value-json INPUT=examples/valuation/demo_stock.json
 
 # VectorBT：Yahoo 行情，双均线，按日期切分 IS/OOS
@@ -108,8 +109,12 @@ set -a && source .env && set +a   # bash/zsh 示例
 `scripts/value_stock.py` 是小范围估值探针：使用 `valueinvest` 的 Graham、DCF、Reverse DCF、Owner Earnings、Altman Z、Piotroski F 等方法，但把数据获取和估值计算分开。稳定路径是 JSON 输入：
 
 ```bash
+make value-validate INPUT=examples/valuation/demo_stock.json
 make value-json INPUT=examples/valuation/demo_stock.json
+make value-json INPUT=examples/valuation/googl_valueinvest_preset.json
 ```
+
+`examples/valuation/googl_valueinvest_preset.json` 是 ValueInvest 包内置 Google 风格 preset 的快照，用于校准字段和流程；它不是实时财务数据。
 
 在线路径可用：
 

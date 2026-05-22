@@ -14,13 +14,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from us_quant.valuation import build_stock, fetch_yahoo_stock, run_valuation
+from us_quant.valuation import build_stock, fetch_yahoo_stock, run_valuation, validate_stock_input
 
 
-def load_json_stock(path: Path):
+def load_json_data(path: Path) -> dict:
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise ValueError("input JSON must be an object")
+    return data
+
+
+def load_json_stock(path: Path):
+    data = load_json_data(path)
     return build_stock(data)
 
 
@@ -63,6 +68,7 @@ def main() -> int:
         default=None,
         help="逗号分隔估值方法；默认使用小范围探针方法集",
     )
+    parser.add_argument("--validate-only", action="store_true", help="只校验 JSON 输入，不运行估值")
     parser.add_argument("--output-json", type=Path, help="可选：保存结构化报告")
     args = parser.parse_args()
 
@@ -71,9 +77,21 @@ def main() -> int:
             if args.input_json is None:
                 print("--source json requires --input-json", file=sys.stderr)
                 return 2
-            stock = load_json_stock(args.input_json)
+            data = load_json_data(args.input_json)
+            validation_errors = validate_stock_input(data)
+            if validation_errors:
+                for error in validation_errors:
+                    print(error, file=sys.stderr)
+                return 1
+            if args.validate_only:
+                print(f"JSON validation PASS: {args.input_json}")
+                return 0
+            stock = build_stock(data)
             source = f"json:{args.input_json}"
         else:
+            if args.validate_only:
+                print("--validate-only is only supported with --source json", file=sys.stderr)
+                return 2
             if not args.symbol:
                 print("--source yahoo requires symbol", file=sys.stderr)
                 return 2
@@ -100,4 +118,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

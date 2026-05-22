@@ -61,3 +61,65 @@ def test_value_stock_cli_reads_json_fixture(tmp_path):
     assert "graham_number" in result.stdout
     assert "dcf" in result.stdout
 
+
+def test_value_stock_cli_validate_only_accepts_valid_json(tmp_path):
+    fixture = tmp_path / "stock.json"
+    fixture.write_text(
+        json.dumps(
+            {
+                "ticker": "demo",
+                "current_price": 100.0,
+                "shares_outstanding": 1_000_000_000,
+                "eps": 6.0,
+                "bvps": 25.0,
+                "fcf": 900_000_000,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            str(ROOT / ".venv/bin/python"),
+            str(ROOT / "scripts/value_stock.py"),
+            "--source",
+            "json",
+            "--input-json",
+            str(fixture),
+            "--validate-only",
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert "JSON validation PASS" in result.stdout
+
+
+def test_value_stock_cli_validate_only_rejects_invalid_json(tmp_path):
+    fixture = tmp_path / "stock.json"
+    fixture.write_text(
+        json.dumps({"ticker": "demo", "current_price": 100.0}),
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            str(ROOT / ".venv/bin/python"),
+            str(ROOT / "scripts/value_stock.py"),
+            "--source",
+            "json",
+            "--input-json",
+            str(fixture),
+            "--validate-only",
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "missing required field: eps" in result.stderr

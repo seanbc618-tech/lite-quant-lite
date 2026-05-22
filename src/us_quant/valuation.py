@@ -22,6 +22,20 @@ DEFAULT_VALUATION_METHODS = [
     "piotroski_f",
 ]
 
+REQUIRED_STOCK_FIELDS = [
+    "ticker",
+    "current_price",
+    "shares_outstanding",
+    "eps",
+    "bvps",
+    "fcf",
+]
+
+POSITIVE_STOCK_FIELDS = [
+    "current_price",
+    "shares_outstanding",
+]
+
 
 @dataclass(frozen=True)
 class ValuationMethodResult:
@@ -73,6 +87,28 @@ def build_stock(data: dict[str, Any]) -> Stock:
     if "ticker" in clean and isinstance(clean["ticker"], str):
         clean["ticker"] = clean["ticker"].upper()
     return Stock(**clean)
+
+
+def validate_stock_input(data: dict[str, Any]) -> list[str]:
+    """Validate the minimum fields needed for an offline valuation probe."""
+    errors: list[str] = []
+
+    for field_name in REQUIRED_STOCK_FIELDS:
+        if field_name not in data or data[field_name] in (None, ""):
+            errors.append(f"missing required field: {field_name}")
+
+    for field_name in POSITIVE_STOCK_FIELDS:
+        if field_name not in data or data[field_name] in (None, ""):
+            continue
+        try:
+            value = float(data[field_name])
+        except (TypeError, ValueError):
+            errors.append(f"{field_name} must be numeric")
+            continue
+        if value <= 0:
+            errors.append(f"{field_name} must be positive")
+
+    return errors
 
 
 def parse_methods(methods: str | Iterable[str] | None) -> list[str]:
@@ -131,4 +167,3 @@ def fetch_yahoo_stock(symbol: str) -> tuple[Stock | None, list[str]]:
         return None, result.errors or [f"Yahoo fetch failed for {symbol.upper()}"]
     stock = build_stock(result.data)
     return stock, result.errors
-
