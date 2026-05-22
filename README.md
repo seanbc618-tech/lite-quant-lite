@@ -21,6 +21,9 @@ python3 -m venv .venv
 | `make smoke` | 快速确认核心库可导入并打印版本 |
 | `make health` | 本地健康检查：依赖、Qlib 数据目录、日历截止、示例信号；默认不依赖 Yahoo |
 | `make data-report` | 本地 Qlib 数据可用性报告：日历、股票池数量、样本标的覆盖、workflow 日期窗口 |
+| `make modern-provider ARGS=--overwrite` | 构建小规模现代 Qlib provider，默认输出到 `~/.qlib/qlib_data/us_modern_mega20` |
+| `make modern-provider-from-csv ARGS=--overwrite` | 用本机 `~/.qlib/stock_data/source/us_data/*.csv` 构建现代 provider，适合 Yahoo 限流时使用 |
+| `make data-report-modern` | 检查小规模现代 provider 的日历、股票池和样本覆盖 |
 | `make test` | 运行项目维护测试 |
 | `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
 | `make value-validate INPUT=examples/valuation/demo_stock.json` | 只校验估值 JSON 输入 |
@@ -49,6 +52,22 @@ make report-runs
 ```
 
 `make data-report` 只读本地 Qlib provider 和 workflow YAML，不下载数据、不写入 `mlruns/`。`mlruns/` 仍然被 `.gitignore` 忽略；`make report-runs` 只读取本机实验产物，不会提交或上传实验文件。
+
+若要先做近年数据的小范围试验，可构建独立的现代 provider：
+
+```bash
+make modern-provider ARGS=--overwrite
+make data-report-modern
+```
+
+第一版默认使用 Yahoo Finance 下载 20 个大型流动性标的，写入独立目录 `~/.qlib/qlib_data/us_modern_mega20`，不会覆盖官方 `us_data`。
+
+如果本机已有 `scripts/update_qlib_data.py` 生成过的 CSV，或 Yahoo 暂时限流，可改用：
+
+```bash
+make modern-provider-from-csv ARGS=--overwrite
+make data-report-modern
+```
 
 ## 其他脚本
 
