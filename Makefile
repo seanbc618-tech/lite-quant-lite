@@ -5,7 +5,7 @@ PY := $(VENV)/python
 PIP := $(PY) -m pip
 PYTHONPATH := PYTHONPATH=src
 
-.PHONY: install install-new data verify smoke health test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2
+.PHONY: install install-new data verify smoke health data-report test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2
 
 install:
 	$(PIP) install -r requirements.txt
@@ -24,6 +24,9 @@ smoke:
 
 health:
 	$(PYTHONPATH) $(PY) scripts/health_check.py
+
+data-report:
+	$(PYTHONPATH) $(PY) scripts/data_report.py
 
 test:
 	$(PY) -m pytest -q

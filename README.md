@@ -20,6 +20,7 @@ python3 -m venv .venv
 |------|------|
 | `make smoke` | 快速确认核心库可导入并打印版本 |
 | `make health` | 本地健康检查：依赖、Qlib 数据目录、日历截止、示例信号；默认不依赖 Yahoo |
+| `make data-report` | 本地 Qlib 数据可用性报告：日历、股票池数量、样本标的覆盖、workflow 日期窗口 |
 | `make test` | 运行项目维护测试 |
 | `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
 | `make value-validate INPUT=examples/valuation/demo_stock.json` | 只校验估值 JSON 输入 |
@@ -43,10 +44,11 @@ python3 -m venv .venv
 已有 Qlib/MLflow 实验可用本地汇总表查看：
 
 ```bash
+make data-report
 make report-runs
 ```
 
-`mlruns/` 仍然被 `.gitignore` 忽略；该命令只读取本机实验产物，不会提交或上传实验文件。
+`make data-report` 只读本地 Qlib provider 和 workflow YAML，不下载数据、不写入 `mlruns/`。`mlruns/` 仍然被 `.gitignore` 忽略；`make report-runs` 只读取本机实验产物，不会提交或上传实验文件。
 
 ## 其他脚本
 

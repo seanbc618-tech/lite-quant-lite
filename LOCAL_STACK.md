@@ -43,6 +43,9 @@ python3 -m venv .venv
 # 本地健康检查（默认不依赖 Yahoo，适合日常维护）
 make health
 
+# 本地 Qlib 数据报告：日历、股票池、样本覆盖、workflow 日期窗口
+make data-report
+
 # 运行维护测试
 make test
 
@@ -80,6 +83,8 @@ make value-json INPUT=examples/valuation/demo_stock.json
 **产物**：实验与指标默认写入项目根目录 **`mlruns/`**（MLflow 文件存储），已加入 `.gitignore`。
 
 **实验汇总**：`make report-runs` 会读取本机 `mlruns/` 并输出 Markdown 表，包含 IC、Rank IC、含成本年化超额收益、最大回撤、IR 等关键字段。该命令只读本地文件，不会把 `mlruns/` 纳入 Git。
+
+**数据报告**：`make data-report` 会读取本地 Qlib provider、`instruments/*.txt` 和 `config/qlib/*.yaml`，并抽样检查 AAPL/MSFT/NVDA/SPY 的本地 `$close` 覆盖。该命令不下载数据、不写入 `mlruns/`，用于判断当前数据年代是否限制后续策略优化。
 
 **日历边界**：若回测 `end_time` 取数据最后一天，部分环境下 Qlib 会在 `TopkDropoutStrategy` 回测末步触发 `IndexError` 。当前配置将 **handler / 回测 / test 段** 统一收束到 **`2020-10-30`**，请与本地数据包截止日期一致调整。
 
