@@ -64,23 +64,26 @@ vbt-v2:
 
 # Qlib 工作流
 qrun-ndx:
-	$(VENV)/qrun config/qlib/workflow_lightgbm_alpha158_us_nasdaq100.yaml
+	$(PY) -m qlib.cli.run config/qlib/workflow_lightgbm_alpha158_us_nasdaq100.yaml
 
 qrun-sp500:
-	$(VENV)/qrun config/qlib/workflow_lightgbm_alpha158_us.yaml
+	$(PY) -m qlib.cli.run config/qlib/workflow_lightgbm_alpha158_us.yaml
 
 # 优化版工作流
 qrun-ndx-low:
-	$(VENV)/qrun config/qlib/workflow_lgb_ndx_low_turnover.yaml
+	$(PY) -m qlib.cli.run config/qlib/workflow_lgb_ndx_low_turnover.yaml
 
 qrun-alpha360:
-	$(VENV)/qrun config/qlib/workflow_lgb_alpha360_ndx.yaml
+	$(PY) -m qlib.cli.run config/qlib/workflow_lgb_alpha360_ndx.yaml
 
 qrun-xgb:
-	$(VENV)/qrun config/qlib/workflow_xgb_alpha158_ndx.yaml
+	$(PY) -m qlib.cli.run config/qlib/workflow_xgb_alpha158_ndx.yaml
 
 qrun-alstm:
-	$(VENV)/qrun config/qlib/workflow_alstm_alpha158_ndx.yaml
+	$(PY) -m qlib.cli.run config/qlib/workflow_alstm_alpha158_ndx.yaml
+
+qrun-modern:
+	$(PY) -m qlib.cli.run config/qlib/workflow_lgb_alpha158_mega20_modern.yaml
 
 # 估值探针
 value:

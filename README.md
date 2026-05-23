@@ -38,9 +38,10 @@ python3 -m venv .venv
 |------|------|------|
 | **VectorBT + Yahoo** | `.venv/bin/python scripts/backtest_vectorbt_baseline.py` | 双均线，按 `--split` 切 IS/OOS |
 | **Qlib 数据 + 规则基线** | `.venv/bin/python scripts/backtest_qlib_baseline.py` | 读本地 `us_data`，默认按比例切分 |
-| **Qlib 完整 ML + 回测（官方风格）** | `.venv/bin/qrun config/qlib/workflow_lightgbm_alpha158_us_nasdaq100.yaml` | LightGBM + Alpha158 + TopK 组合回测；产物在 `mlruns/` |
+| **Qlib 完整 ML + 回测（官方风格）** | `make qrun-ndx` | LightGBM + Alpha158 + TopK 组合回测；产物在 `mlruns/` |
+| **Qlib 现代小样本验证** | `make qrun-modern` | 读取 `~/.qlib/qlib_data/us_modern_mega20`，用于先验证现代数据链路 |
 
-较快迭代可用 **nasdaq100** 配置；全市场 SP500 用 `config/qlib/workflow_lightgbm_alpha158_us.yaml`（耗时更长）。
+较快迭代可用 **nasdaq100** 配置；全市场 SP500 用 `config/qlib/workflow_lightgbm_alpha158_us.yaml`（耗时更长）。现代小样本验证用 `config/qlib/workflow_lgb_alpha158_mega20_modern.yaml`。
 
 **注意**：官方 `us_data` 日线常止于约 **2020-11**；工作流中回测结束日已设为 **2020-10-30**，避免 Qlib 交易日历在末端的越界错误。
 

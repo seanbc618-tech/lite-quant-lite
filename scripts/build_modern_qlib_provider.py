@@ -24,7 +24,7 @@ DEFAULT_CSV_DIR = Path.home() / ".qlib" / "stock_data" / "source" / "us_data"
 DEFAULT_START = "2018-01-01"
 DEFAULT_END = date.today().isoformat()
 DEFAULT_MARKET = "mega20"
-DEFAULT_FIELDS = ("open", "high", "low", "close", "volume", "factor", "change")
+DEFAULT_FIELDS = ("open", "high", "low", "close", "volume", "vwap", "factor", "change")
 MEGA20_SYMBOLS = (
     "SPY",
     "QQQ",
@@ -99,6 +99,7 @@ def normalize_ohlcv(symbol: str, raw: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(f"{symbol}: no valid close rows")
 
     frame["factor"] = 1.0
+    frame["vwap"] = frame["close"]
     frame["change"] = frame["close"].pct_change()
     return frame.loc[:, list(DEFAULT_FIELDS)]
 

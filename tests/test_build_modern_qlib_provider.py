@@ -36,6 +36,7 @@ def test_normalize_ohlcv_accepts_yfinance_style_columns():
     assert list(normalized.index.strftime("%Y-%m-%d")) == ["2024-01-02", "2024-01-03"]
     assert list(normalized.columns) == list(DEFAULT_FIELDS)
     assert normalized.loc[pd.Timestamp("2024-01-02"), "factor"] == 1.0
+    assert normalized.loc[pd.Timestamp("2024-01-02"), "vwap"] == 99.5
     assert pd.isna(normalized.loc[pd.Timestamp("2024-01-02"), "change"])
     assert normalized.loc[pd.Timestamp("2024-01-03"), "change"] == (100.5 / 99.5) - 1
 
