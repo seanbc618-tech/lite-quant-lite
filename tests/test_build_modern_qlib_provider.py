@@ -7,7 +7,7 @@ import pandas as pd
 
 from scripts.build_modern_qlib_provider import (
     DEFAULT_FIELDS,
-    MEGA20_SYMBOLS,
+    LIQUID100_SYMBOLS,
     build_provider_from_frames,
     load_csv_frames,
     normalize_ohlcv,
@@ -95,9 +95,9 @@ def test_build_provider_from_frames_writes_qlib_layout(tmp_path):
     assert msft_open_values == [200.0, 201.0]
 
 
-def test_default_symbol_list_is_small_and_includes_benchmarks():
-    assert len(MEGA20_SYMBOLS) == 20
-    assert {"SPY", "QQQ", "AAPL", "MSFT", "NVDA"}.issubset(MEGA20_SYMBOLS)
+def test_default_symbol_list_targets_broader_liquid_universe():
+    assert 50 <= len(LIQUID100_SYMBOLS) <= 110
+    assert {"SPY", "QQQ", "AAPL", "MSFT", "NVDA"}.issubset(LIQUID100_SYMBOLS)
 
 
 def test_load_csv_frames_reads_available_symbol_files(tmp_path):
@@ -113,3 +113,18 @@ def test_load_csv_frames_reads_available_symbol_files(tmp_path):
 
     assert list(frames) == ["AAPL"]
     assert frames["AAPL"].loc[0, "close"] == 1.5
+
+
+def test_load_csv_frames_can_use_all_available_csv_files(tmp_path):
+    csv_dir = tmp_path / "csv"
+    csv_dir.mkdir()
+    for symbol in ["MSFT", "AAPL"]:
+        (csv_dir / f"{symbol}.csv").write_text(
+            "date,symbol,open,high,low,close,adjclose,volume\n"
+            f"2024-01-02,{symbol},1,2,0.5,1.5,1.5,100\n",
+            encoding="utf-8",
+        )
+
+    frames = load_csv_frames(csv_dir, None)
+
+    assert list(frames) == ["AAPL", "MSFT"]

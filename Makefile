@@ -4,10 +4,11 @@ VENV := .venv/bin
 PY := $(VENV)/python
 PIP := $(PY) -m pip
 PYTHONPATH := PYTHONPATH=src
-MODERN_PROVIDER := $(HOME)/.qlib/qlib_data/us_modern_mega20
+MODERN_PROVIDER := $(HOME)/.qlib/qlib_data/us_modern_liquid100
+MODERN_MARKET := liquid100
 CSV_SOURCE := $(HOME)/.qlib/stock_data/source/us_data
 
-.PHONY: install install-new data modern-provider modern-provider-from-csv verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2
+.PHONY: install install-new data modern-provider modern-provider-from-csv modern-provider-from-all-csv verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2
 
 install:
 	$(PIP) install -r requirements.txt
@@ -19,10 +20,13 @@ data:
 	$(PY) scripts/download_qlib_us.py
 
 modern-provider:
-	$(PYTHONPATH) $(PY) scripts/build_modern_qlib_provider.py --provider-uri $(MODERN_PROVIDER) $(ARGS)
+	$(PYTHONPATH) $(PY) scripts/build_modern_qlib_provider.py --provider-uri $(MODERN_PROVIDER) --market $(MODERN_MARKET) $(ARGS)
 
 modern-provider-from-csv:
-	$(PYTHONPATH) $(PY) scripts/build_modern_qlib_provider.py --provider-uri $(MODERN_PROVIDER) --csv-dir $(CSV_SOURCE) $(ARGS)
+	$(PYTHONPATH) $(PY) scripts/build_modern_qlib_provider.py --provider-uri $(MODERN_PROVIDER) --market $(MODERN_MARKET) --csv-dir $(CSV_SOURCE) $(ARGS)
+
+modern-provider-from-all-csv:
+	$(PYTHONPATH) $(PY) scripts/build_modern_qlib_provider.py --provider-uri $(MODERN_PROVIDER) --market $(MODERN_MARKET) --csv-dir $(CSV_SOURCE) --symbols-from-csv $(ARGS)
 
 verify:
 	$(PY) scripts/verify_data_sources.py
@@ -37,7 +41,7 @@ data-report:
 	$(PYTHONPATH) $(PY) scripts/data_report.py
 
 data-report-modern:
-	$(PYTHONPATH) $(PY) scripts/data_report.py --provider-uri $(MODERN_PROVIDER) --markets all,mega20
+	$(PYTHONPATH) $(PY) scripts/data_report.py --provider-uri $(MODERN_PROVIDER) --markets all,$(MODERN_MARKET) --symbols AAPL,MSFT,NVDA,SPY,QQQ
 
 test:
 	$(PY) -m pytest -q
@@ -83,7 +87,7 @@ qrun-alstm:
 	$(PY) -m qlib.cli.run config/qlib/workflow_alstm_alpha158_ndx.yaml
 
 qrun-modern:
-	$(PY) -m qlib.cli.run config/qlib/workflow_lgb_alpha158_mega20_modern.yaml
+	$(PY) -m qlib.cli.run config/qlib/workflow_lgb_alpha158_liquid100_modern.yaml
 
 # 估值探针
 value:

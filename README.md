@@ -21,8 +21,9 @@ python3 -m venv .venv
 | `make smoke` | 快速确认核心库可导入并打印版本 |
 | `make health` | 本地健康检查：依赖、Qlib 数据目录、日历截止、示例信号；默认不依赖 Yahoo |
 | `make data-report` | 本地 Qlib 数据可用性报告：日历、股票池数量、样本标的覆盖、workflow 日期窗口 |
-| `make modern-provider ARGS=--overwrite` | 构建小规模现代 Qlib provider，默认输出到 `~/.qlib/qlib_data/us_modern_mega20` |
+| `make modern-provider ARGS=--overwrite` | 构建现代 Qlib provider，默认输出到 `~/.qlib/qlib_data/us_modern_liquid100` |
 | `make modern-provider-from-csv ARGS=--overwrite` | 用本机 `~/.qlib/stock_data/source/us_data/*.csv` 构建现代 provider，适合 Yahoo 限流时使用 |
+| `make modern-provider-from-all-csv ARGS=--overwrite` | 用本机 CSV 目录中全部可用标的构建现代 provider |
 | `make data-report-modern` | 检查小规模现代 provider 的日历、股票池和样本覆盖 |
 | `make test` | 运行项目维护测试 |
 | `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
@@ -39,9 +40,9 @@ python3 -m venv .venv
 | **VectorBT + Yahoo** | `.venv/bin/python scripts/backtest_vectorbt_baseline.py` | 双均线，按 `--split` 切 IS/OOS |
 | **Qlib 数据 + 规则基线** | `.venv/bin/python scripts/backtest_qlib_baseline.py` | 读本地 `us_data`，默认按比例切分 |
 | **Qlib 完整 ML + 回测（官方风格）** | `make qrun-ndx` | LightGBM + Alpha158 + TopK 组合回测；产物在 `mlruns/` |
-| **Qlib 现代小样本验证** | `make qrun-modern` | 读取 `~/.qlib/qlib_data/us_modern_mega20`，用于先验证现代数据链路 |
+| **Qlib 现代样本验证** | `make qrun-modern` | 读取 `~/.qlib/qlib_data/us_modern_liquid100`，用于验证现代数据链路 |
 
-较快迭代可用 **nasdaq100** 配置；全市场 SP500 用 `config/qlib/workflow_lightgbm_alpha158_us.yaml`（耗时更长）。现代小样本验证用 `config/qlib/workflow_lgb_alpha158_mega20_modern.yaml`。
+较快迭代可用 **nasdaq100** 配置；全市场 SP500 用 `config/qlib/workflow_lightgbm_alpha158_us.yaml`（耗时更长）。现代样本验证用 `config/qlib/workflow_lgb_alpha158_liquid100_modern.yaml`。
 
 **注意**：官方 `us_data` 日线常止于约 **2020-11**；工作流中回测结束日已设为 **2020-10-30**，避免 Qlib 交易日历在末端的越界错误。
 
@@ -61,12 +62,19 @@ make modern-provider ARGS=--overwrite
 make data-report-modern
 ```
 
-第一版默认使用 Yahoo Finance 下载 20 个大型流动性标的，写入独立目录 `~/.qlib/qlib_data/us_modern_mega20`，不会覆盖官方 `us_data`。
+默认使用 Yahoo Finance 下载一组接近 100 个大型流动性标的，写入独立目录 `~/.qlib/qlib_data/us_modern_liquid100`，不会覆盖官方 `us_data`。
 
 如果本机已有 `scripts/update_qlib_data.py` 生成过的 CSV，或 Yahoo 暂时限流，可改用：
 
 ```bash
 make modern-provider-from-csv ARGS=--overwrite
+make data-report-modern
+```
+
+如果本机 CSV 目录已经有一批历史文件，可直接全部纳入：
+
+```bash
+make modern-provider-from-all-csv ARGS=--overwrite
 make data-report-modern
 ```
 

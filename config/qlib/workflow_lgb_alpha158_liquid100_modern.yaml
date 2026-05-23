@@ -1,15 +1,15 @@
-# LightGBM + Alpha158，现代小股票池验证版
-# provider: ~/.qlib/qlib_data/us_modern_mega20
+# LightGBM + Alpha158，现代流动性股票池验证版
+# provider: ~/.qlib/qlib_data/us_modern_liquid100
 # 注意：当前本地 CSV 缺少 SPY/QQQ，本配置临时用 AAPL 作为 benchmark，
 # 只用于验证现代 provider -> Qlib workflow 链路，不用于严肃业绩归因。
 
 qlib_init:
-    provider_uri: "~/.qlib/qlib_data/us_modern_mega20"
+    provider_uri: "~/.qlib/qlib_data/us_modern_liquid100"
     region: us
 
-experiment_name: lightgbm_alpha158_mega20_modern
+experiment_name: lightgbm_alpha158_liquid100_modern
 
-market: &market mega20
+market: &market liquid100
 benchmark: &benchmark AAPL
 
 data_handler_config: &data_handler_config
@@ -25,7 +25,7 @@ port_analysis_config: &port_analysis_config
         module_path: qlib.contrib.strategy
         kwargs:
             signal: <PRED>
-            topk: 5
+            topk: 20
             n_drop: 1
     backtest:
         start_time: 2024-01-02

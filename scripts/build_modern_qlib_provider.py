@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Build a small modern Qlib US daily provider from Yahoo Finance data.
+"""Build a modern Qlib US daily provider from Yahoo Finance or local CSV data.
 
 The target provider is intentionally separate from the historical Qlib
-``us_data`` bundle. It is meant for quick modern-era experiments before taking
-on a full universe rebuild.
+``us_data`` bundle. It is meant for modern-era experiments before taking on a
+full survivorship-aware universe rebuild.
 """
 from __future__ import annotations
 
@@ -19,33 +19,109 @@ import numpy as np
 import pandas as pd
 
 
-DEFAULT_PROVIDER = Path.home() / ".qlib" / "qlib_data" / "us_modern_mega20"
+DEFAULT_PROVIDER = Path.home() / ".qlib" / "qlib_data" / "us_modern_liquid100"
 DEFAULT_CSV_DIR = Path.home() / ".qlib" / "stock_data" / "source" / "us_data"
 DEFAULT_START = "2018-01-01"
 DEFAULT_END = date.today().isoformat()
-DEFAULT_MARKET = "mega20"
+DEFAULT_MARKET = "liquid100"
 DEFAULT_FIELDS = ("open", "high", "low", "close", "volume", "vwap", "factor", "change")
-MEGA20_SYMBOLS = (
+LIQUID100_SYMBOLS = (
     "SPY",
     "QQQ",
     "AAPL",
-    "MSFT",
-    "NVDA",
-    "AMZN",
-    "GOOGL",
-    "META",
-    "TSLA",
-    "AVGO",
-    "COST",
-    "NFLX",
-    "AMD",
+    "ABNB",
     "ADBE",
+    "ADP",
+    "AEP",
+    "ALGN",
+    "AMD",
+    "AMGN",
+    "AMZN",
+    "ASML",
+    "AVGO",
+    "AZN",
+    "BIDU",
+    "BIIB",
+    "BKR",
+    "CDNS",
+    "CEG",
+    "CHTR",
+    "CMCSA",
+    "COST",
+    "CPRT",
     "CRM",
-    "INTC",
+    "CRWD",
     "CSCO",
+    "CSX",
+    "CTAS",
+    "CTSH",
+    "DDOG",
+    "DLTR",
+    "DXCM",
+    "EA",
+    "ENPH",
+    "EXC",
+    "FAST",
+    "FISV",
+    "FSLR",
+    "FTNT",
+    "GILD",
+    "GOOGL",
+    "HON",
+    "IDXX",
+    "ILMN",
+    "INTC",
+    "INTU",
+    "ISRG",
+    "JD",
+    "KDP",
+    "KHC",
+    "KLAC",
+    "LRCX",
+    "LULU",
+    "MAR",
+    "MCHP",
+    "MDLZ",
+    "MELI",
+    "META",
+    "MNST",
+    "MRNA",
+    "MRVL",
+    "MSFT",
+    "MU",
+    "NFLX",
+    "NKE",
+    "NTES",
+    "NVDA",
+    "NXPI",
+    "ODFL",
+    "OKTA",
+    "ORLY",
+    "PANW",
+    "PAYX",
+    "PCAR",
+    "PDD",
     "PEP",
+    "PYPL",
     "QCOM",
+    "REGN",
+    "ROST",
+    "SBUX",
+    "SIRI",
+    "SNOW",
+    "SWKS",
+    "TCOM",
+    "TEAM",
+    "TMUS",
+    "TSLA",
     "TXN",
+    "ULTA",
+    "VRSK",
+    "VRSN",
+    "VRTX",
+    "XEL",
+    "ZBRA",
+    "ZS",
 )
 
 
@@ -177,8 +253,14 @@ def download_yahoo_frames(symbols: list[str], start: str, end: str) -> dict[str,
     return frames
 
 
-def load_csv_frames(csv_dir: Path, symbols: list[str]) -> dict[str, pd.DataFrame]:
+def available_csv_symbols(csv_dir: Path) -> list[str]:
+    return sorted(path.stem.upper() for path in csv_dir.expanduser().glob("*.csv"))
+
+
+def load_csv_frames(csv_dir: Path, symbols: list[str] | None) -> dict[str, pd.DataFrame]:
     frames: dict[str, pd.DataFrame] = {}
+    if symbols is None:
+        symbols = available_csv_symbols(csv_dir)
     for symbol in symbols:
         path = csv_dir.expanduser() / f"{normalize_symbol(symbol)}.csv"
         if not path.is_file():
@@ -192,10 +274,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="构建小规模现代 Qlib 美股日线 provider")
     parser.add_argument("--provider-uri", type=Path, default=DEFAULT_PROVIDER, help="输出 Qlib provider 目录")
     parser.add_argument("--csv-dir", type=Path, default=None, help="从本地 CSV 目录读取 SYMBOL.csv，跳过 Yahoo 下载")
+    parser.add_argument("--symbols-from-csv", action="store_true", help="使用 --csv-dir 中全部可用 CSV 标的")
     parser.add_argument("--market", default=DEFAULT_MARKET, help="instrument 文件名")
     parser.add_argument("--start", default=DEFAULT_START, help="开始日期")
     parser.add_argument("--end", default=DEFAULT_END, help="结束日期，按 yfinance 习惯为右开区间")
-    parser.add_argument("--symbols", nargs="+", default=list(MEGA20_SYMBOLS), help="标的列表")
+    parser.add_argument("--symbols", nargs="+", default=list(LIQUID100_SYMBOLS), help="标的列表")
     parser.add_argument("--overwrite", action="store_true", help="若 provider 目录已存在则先删除")
     return parser.parse_args()
 
@@ -210,7 +293,7 @@ def main() -> int:
             return 2
         shutil.rmtree(provider_uri)
 
-    symbols = [normalize_symbol(symbol) for symbol in args.symbols]
+    symbols = None if args.symbols_from_csv else [normalize_symbol(symbol) for symbol in args.symbols]
     if args.csv_dir is not None:
         frames = load_csv_frames(args.csv_dir, symbols)
     else:
