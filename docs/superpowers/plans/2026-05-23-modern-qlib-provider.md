@@ -12,7 +12,9 @@
 - [x] Add CLI target `make modern-provider`.
 - [x] Add local CSV fallback target `make modern-provider-from-csv`.
 - [x] Add all-local-CSV target `make modern-provider-from-all-csv`.
+- [x] Add Nasdaq CSV updater to fill SPY/QQQ and extend local CSVs when Yahoo is limited.
 - [x] Add report target `make data-report-modern`.
+- [x] Add workflow parameter checks for benchmark availability, TopK share, and cost fields.
 - [x] Document the workflow and its limitation as a small modern trial provider.
 
 **Verification checklist**

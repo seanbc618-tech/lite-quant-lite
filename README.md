@@ -22,6 +22,7 @@ python3 -m venv .venv
 | `make health` | 本地健康检查：依赖、Qlib 数据目录、日历截止、示例信号；默认不依赖 Yahoo |
 | `make data-report` | 本地 Qlib 数据可用性报告：日历、股票池数量、样本标的覆盖、workflow 日期窗口 |
 | `make modern-provider ARGS=--overwrite` | 构建现代 Qlib provider，默认输出到 `~/.qlib/qlib_data/us_modern_liquid100` |
+| `make update-modern-csv-nasdaq ARGS="--start 2025-03-27 --end 2026-05-24"` | 用 Nasdaq 历史行情接口更新现代 provider 的 CSV 源，并补 SPY/QQQ |
 | `make modern-provider-from-csv ARGS=--overwrite` | 用本机 `~/.qlib/stock_data/source/us_data/*.csv` 构建现代 provider，适合 Yahoo 限流时使用 |
 | `make modern-provider-from-all-csv ARGS=--overwrite` | 用本机 CSV 目录中全部可用标的构建现代 provider |
 | `make data-report-modern` | 检查小规模现代 provider 的日历、股票池和样本覆盖 |
@@ -74,6 +75,14 @@ make data-report-modern
 如果本机 CSV 目录已经有一批历史文件，可直接全部纳入：
 
 ```bash
+make modern-provider-from-all-csv ARGS=--overwrite
+make data-report-modern
+```
+
+若要把现代数据推进到近年，先更新 CSV，再重建 provider：
+
+```bash
+make update-modern-csv-nasdaq ARGS="--start 2025-03-27 --end 2026-05-24"
 make modern-provider-from-all-csv ARGS=--overwrite
 make data-report-modern
 ```

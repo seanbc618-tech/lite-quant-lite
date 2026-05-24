@@ -11,6 +11,7 @@ from scripts.data_report import (
     format_report,
     parse_calendar,
     parse_workflow,
+    workflow_parameter_status,
     workflow_status,
 )
 
@@ -61,9 +62,18 @@ task:
         valid: [2017-01-01, 2018-12-31]
         test: [2019-01-01, 2020-10-30]
 port_analysis_config:
+  strategy:
+    kwargs:
+      topk: 10
+      n_drop: 1
   backtest:
     start_time: 2019-01-01
     end_time: 2020-10-30
+    benchmark: SPY
+    exchange_kwargs:
+      open_cost: 0.0005
+      close_cost: 0.0015
+      min_cost: 5
 """,
     )
 
@@ -79,9 +89,18 @@ port_analysis_config:
         valid=("2017-01-01", "2018-12-31"),
         test=("2019-01-01", "2020-10-30"),
         backtest=("2019-01-01", "2020-10-30"),
+        benchmark="SPY",
+        topk=10,
+        n_drop=1,
+        open_cost=0.0005,
+        close_cost=0.0015,
+        min_cost=5,
     )
     assert workflow_status(summary, "2020-11-10") == "OK"
     assert workflow_status(summary, "2020-09-30") == "EXCEEDS_CALENDAR"
+    assert workflow_parameter_status(summary, {"SPY", "AAPL", "MSFT"}, market_count=40) == "OK"
+    assert workflow_parameter_status(summary, {"SPY", "AAPL", "MSFT"}, market_count=20) == "HIGH_TOPK_SHARE"
+    assert workflow_parameter_status(summary, {"AAPL", "MSFT"}, market_count=40) == "MISSING_BENCHMARK"
 
 
 def test_data_age_note_marks_old_calendar_as_stale():
@@ -100,6 +119,12 @@ def test_format_report_includes_core_sections(tmp_path):
         valid=("2017-01-01", "2018-12-31"),
         test=("2019-01-01", "2020-10-30"),
         backtest=("2019-01-01", "2020-10-30"),
+        benchmark="SPY",
+        topk=10,
+        n_drop=1,
+        open_cost=0.0005,
+        close_cost=0.0015,
+        min_cost=5,
     )
 
     report = format_report(
@@ -116,3 +141,5 @@ def test_format_report_includes_core_sections(tmp_path):
     assert "data_age: STALE" in report
     assert "| nasdaq100 | 101 |" in report
     assert "| workflow_demo.yaml | demo_exp | nasdaq100 | 2020-10-30 |" in report
+    assert "## Workflow Parameters" in report
+    assert "| workflow_demo.yaml | SPY | 10 | 1 | 0.0005 | 0.0015 | 5 |" in report

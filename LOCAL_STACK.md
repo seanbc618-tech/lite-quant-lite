@@ -43,6 +43,9 @@ make modern-provider ARGS=--overwrite
 # 若 Yahoo 限流，使用本机已有 CSV 构建
 make modern-provider-from-csv ARGS=--overwrite
 
+# 用 Nasdaq 接口更新 CSV 源，并补 SPY/QQQ benchmark
+make update-modern-csv-nasdaq ARGS="--start 2025-03-27 --end 2026-05-24"
+
 # 使用本机 CSV 目录中全部可用标的构建
 make modern-provider-from-all-csv ARGS=--overwrite
 
@@ -92,7 +95,7 @@ make value-json INPUT=examples/valuation/demo_stock.json
 
 也可用 Makefile：`make qrun-ndx` / `make qrun-sp500`。
 
-现代 provider 可用 `make qrun-modern` 做链路验证。当前本机 CSV 缺少 SPY/QQQ，现代 workflow 临时以 AAPL 为 benchmark；它适合确认 2020-2025 数据能跑通 Qlib，不适合单独作为策略优劣判断。
+现代 provider 可用 `make qrun-modern` 做链路验证。当前现代 workflow 使用 SPY 作为 benchmark；它适合确认近年数据能跑通 Qlib，再逐步做策略参数对比。
 
 **产物**：实验与指标默认写入项目根目录 **`mlruns/`**（MLflow 文件存储），已加入 `.gitignore`。
 
@@ -100,7 +103,7 @@ make value-json INPUT=examples/valuation/demo_stock.json
 
 **数据报告**：`make data-report` 会读取本地 Qlib provider、`instruments/*.txt` 和 `config/qlib/*.yaml`，并抽样检查 AAPL/MSFT/NVDA/SPY 的本地 `$close` 覆盖。该命令不下载数据、不写入 `mlruns/`，用于判断当前数据年代是否限制后续策略优化。
 
-**现代 provider**：`make modern-provider ARGS=--overwrite` 会通过 Yahoo Finance 构建独立 provider：`~/.qlib/qlib_data/us_modern_liquid100`。默认目标股票池接近 100 个大型流动性标的（含 SPY/QQQ/AAPL/MSFT/NVDA 等），字段包含 `open/high/low/close/volume/vwap/factor/change`，适合验证现代数据能否支撑 Qlib 工作流。该命令不会覆盖官方 `us_data`。若 Yahoo 限流，且本机已有 `~/.qlib/stock_data/source/us_data/*.csv`，可用 `make modern-provider-from-csv ARGS=--overwrite` 按默认清单构建，或 `make modern-provider-from-all-csv ARGS=--overwrite` 纳入全部本地 CSV。
+**现代 provider**：`make modern-provider ARGS=--overwrite` 会通过 Yahoo Finance 构建独立 provider：`~/.qlib/qlib_data/us_modern_liquid100`。默认目标股票池接近 100 个大型流动性标的（含 SPY/QQQ/AAPL/MSFT/NVDA 等），字段包含 `open/high/low/close/volume/vwap/factor/change`，适合验证现代数据能否支撑 Qlib 工作流。该命令不会覆盖官方 `us_data`。若 Yahoo 限流，且本机已有 `~/.qlib/stock_data/source/us_data/*.csv`，可用 `make update-modern-csv-nasdaq` 从 Nasdaq 补近年 CSV，再用 `make modern-provider-from-all-csv ARGS=--overwrite` 纳入全部本地 CSV。
 
 **日历边界**：若回测 `end_time` 取数据最后一天，部分环境下 Qlib 会在 `TopkDropoutStrategy` 回测末步触发 `IndexError` 。当前配置将 **handler / 回测 / test 段** 统一收束到 **`2020-10-30`**，请与本地数据包截止日期一致调整。
 

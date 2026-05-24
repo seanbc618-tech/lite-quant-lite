@@ -58,6 +58,12 @@ class WorkflowSummary:
     valid: DateRange
     test: DateRange
     backtest: DateRange
+    benchmark: str | None = None
+    topk: int | None = None
+    n_drop: int | None = None
+    open_cost: float | None = None
+    close_cost: float | None = None
+    min_cost: float | None = None
 
 
 def normalize_date(value: Any) -> str | None:
@@ -86,6 +92,17 @@ def count_instruments(path: Path) -> int:
         for line in path.read_text(encoding="utf-8").splitlines()
         if line.strip() and not line.lstrip().startswith("#")
     )
+
+
+def read_instrument_symbols(path: Path) -> set[str]:
+    if not path.is_file():
+        return set()
+    symbols: set[str] = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        symbols.add(line.split()[0].upper())
+    return symbols
 
 
 def collect_instrument_summaries(provider_uri: Path, markets: Iterable[str]) -> list[InstrumentSummary]:
@@ -125,6 +142,10 @@ def parse_workflow(path: Path) -> WorkflowSummary:
     segments = segments if isinstance(segments, dict) else {}
     backtest = dig(payload, ("port_analysis_config", "backtest"))
     backtest = backtest if isinstance(backtest, dict) else {}
+    strategy_kwargs = dig(payload, ("port_analysis_config", "strategy", "kwargs"))
+    strategy_kwargs = strategy_kwargs if isinstance(strategy_kwargs, dict) else {}
+    exchange_kwargs = backtest.get("exchange_kwargs")
+    exchange_kwargs = exchange_kwargs if isinstance(exchange_kwargs, dict) else {}
 
     market = payload.get("market") or handler.get("instruments")
 
@@ -138,6 +159,12 @@ def parse_workflow(path: Path) -> WorkflowSummary:
         valid=parse_range(segments.get("valid")),
         test=parse_range(segments.get("test")),
         backtest=(normalize_date(backtest.get("start_time")), normalize_date(backtest.get("end_time"))),
+        benchmark=str(payload.get("benchmark") or backtest.get("benchmark") or "") or None,
+        topk=as_int(strategy_kwargs.get("topk")),
+        n_drop=as_int(strategy_kwargs.get("n_drop")),
+        open_cost=as_float(exchange_kwargs.get("open_cost")),
+        close_cost=as_float(exchange_kwargs.get("close_cost")),
+        min_cost=as_float(exchange_kwargs.get("min_cost")),
     )
 
 
@@ -157,6 +184,38 @@ def workflow_status(workflow: WorkflowSummary, calendar_end: str | None) -> str:
     if not calendar_end or not known_ends:
         return "UNKNOWN"
     return "EXCEEDS_CALENDAR" if max(known_ends) > calendar_end else "OK"
+
+
+def as_int(value: Any) -> int | None:
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def as_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def workflow_parameter_status(workflow: WorkflowSummary, provider_symbols: set[str], market_count: int | None) -> str:
+    warnings: list[str] = []
+    if workflow.benchmark and provider_symbols and workflow.benchmark.upper() not in provider_symbols:
+        warnings.append("MISSING_BENCHMARK")
+    if workflow.topk is not None and market_count:
+        if workflow.topk > market_count:
+            warnings.append("TOPK_GT_MARKET")
+        elif workflow.topk / market_count > 0.30:
+            warnings.append("HIGH_TOPK_SHARE")
+    if workflow.open_cost is None or workflow.close_cost is None or workflow.min_cost is None:
+        warnings.append("COST_UNKNOWN")
+    return ",".join(warnings) if warnings else "OK"
 
 
 def data_age_note(calendar_end: str, today: str | date | None = None) -> str:
@@ -269,6 +328,35 @@ def format_report(
                     format_range(item.test),
                     format_range(item.backtest),
                     workflow_status(item, calendar.end),
+                ]
+            )
+            + " |"
+        )
+    all_symbols = read_instrument_symbols(provider / "instruments" / "all.txt")
+    market_counts = {item.market: item.count for item in instruments}
+    lines.extend(
+        [
+            "",
+            "## Workflow Parameters",
+            "",
+            "| workflow | benchmark | topk | n_drop | open_cost | close_cost | min_cost | status |",
+            "|---|---|---:|---:|---:|---:|---:|---|",
+        ]
+    )
+    for item in workflows:
+        market_count = market_counts.get(item.market or "")
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    item.path.name,
+                    item.benchmark or "-",
+                    str(item.topk) if item.topk is not None else "-",
+                    str(item.n_drop) if item.n_drop is not None else "-",
+                    str(item.open_cost) if item.open_cost is not None else "-",
+                    str(item.close_cost) if item.close_cost is not None else "-",
+                    str(item.min_cost) if item.min_cost is not None else "-",
+                    workflow_parameter_status(item, all_symbols, market_count),
                 ]
             )
             + " |"
