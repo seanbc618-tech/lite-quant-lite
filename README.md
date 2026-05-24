@@ -26,6 +26,7 @@ python3 -m venv .venv
 | `make modern-provider-from-csv ARGS=--overwrite` | 用本机 `~/.qlib/stock_data/source/us_data/*.csv` 构建现代 provider，适合 Yahoo 限流时使用 |
 | `make modern-provider-from-all-csv ARGS=--overwrite` | 用本机 CSV 目录中全部可用标的构建现代 provider |
 | `make data-report-modern` | 检查小规模现代 provider 的日历、股票池和样本覆盖 |
+| `make sweep-modern ARGS="--cost-scenarios base"` | 跑现代 liquid100 参数矩阵，默认 `topk=10/15/20`、`n_drop=1/2/3` |
 | `make test` | 运行项目维护测试 |
 | `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
 | `make value-validate INPUT=examples/valuation/demo_stock.json` | 只校验估值 JSON 输入 |
@@ -55,6 +56,19 @@ make report-runs
 ```
 
 `make data-report` 只读本地 Qlib provider 和 workflow YAML，不下载数据、不写入 `mlruns/`。`mlruns/` 仍然被 `.gitignore` 忽略；`make report-runs` 只读取本机实验产物，不会提交或上传实验文件。
+
+现代参数矩阵先跑持仓/换手组合，再用汇总表看结果：
+
+```bash
+make sweep-modern ARGS="--cost-scenarios base"
+make report-runs
+```
+
+成本敏感性可在筛出较好的 topk/n_drop 后再跑，例如：
+
+```bash
+make sweep-modern ARGS="--topks 10,15 --n-drops 1,2 --cost-scenarios half,zero"
+```
 
 若要先做近年数据的小范围试验，可构建独立的现代 provider：
 

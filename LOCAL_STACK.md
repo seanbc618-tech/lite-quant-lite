@@ -61,6 +61,9 @@ make data-report
 # 检查小规模现代 provider
 make data-report-modern
 
+# 现代 liquid100 参数矩阵
+make sweep-modern ARGS="--cost-scenarios base"
+
 # 运行维护测试
 make test
 
@@ -96,6 +99,8 @@ make value-json INPUT=examples/valuation/demo_stock.json
 也可用 Makefile：`make qrun-ndx` / `make qrun-sp500`。
 
 现代 provider 可用 `make qrun-modern` 做链路验证。当前现代 workflow 使用 SPY 作为 benchmark；它适合确认近年数据能跑通 Qlib，再逐步做策略参数对比。
+
+参数对比用 `make sweep-modern`，默认矩阵是 `topk=10/15/20` x `n_drop=1/2/3`，成本场景默认 `base`。临时 workflow 会写入 `.cache/qlib_sweeps/modern_liquid100/`，实验指标继续进入 `mlruns/`，用 `make report-runs` 汇总。
 
 **产物**：实验与指标默认写入项目根目录 **`mlruns/`**（MLflow 文件存储），已加入 `.gitignore`。
 
