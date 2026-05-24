@@ -16,10 +16,17 @@ DEFAULT_BASE_CONFIG = Path("config/qlib/workflow_lgb_alpha158_liquid100_modern.y
 DEFAULT_OUTPUT_DIR = Path(".cache/qlib_sweeps/modern_liquid100")
 DEFAULT_TOPKS = (10, 15, 20)
 DEFAULT_N_DROPS = (1, 2, 3)
+DEFAULT_BENCHMARKS = ("SPY",)
 COST_SCENARIOS = {
     "base": {"open_cost": 0.0005, "close_cost": 0.0015, "min_cost": 5},
     "half": {"open_cost": 0.00025, "close_cost": 0.00075, "min_cost": 2.5},
     "zero": {"open_cost": 0.0, "close_cost": 0.0, "min_cost": 0},
+}
+TIME_SLICES = {
+    "full": None,
+    "2025h1": ("2025-01-02", "2025-06-30"),
+    "2025h2": ("2025-07-01", "2025-12-31"),
+    "2026ytd": ("2026-01-02", "2026-05-15"),
 }
 
 
@@ -28,26 +35,48 @@ class SweepSpec:
     topk: int
     n_drop: int
     cost_scenario: str
+    benchmark: str = "SPY"
+    time_slice: str = "full"
 
 
 def build_sweep_specs(
     topks: list[int],
     n_drops: list[int],
     cost_scenarios: list[str],
+    benchmarks: list[str] | None = None,
+    time_slices: list[str] | None = None,
 ) -> list[SweepSpec]:
     unknown = [name for name in cost_scenarios if name not in COST_SCENARIOS]
     if unknown:
         raise ValueError(f"unknown cost scenarios: {', '.join(unknown)}")
+    benchmarks = benchmarks or list(DEFAULT_BENCHMARKS)
+    time_slices = time_slices or ["full"]
+    unknown_slices = [name for name in time_slices if name not in TIME_SLICES]
+    if unknown_slices:
+        raise ValueError(f"unknown time slices: {', '.join(unknown_slices)}")
     return [
-        SweepSpec(topk=topk, n_drop=n_drop, cost_scenario=cost_scenario)
+        SweepSpec(
+            topk=topk,
+            n_drop=n_drop,
+            cost_scenario=cost_scenario,
+            benchmark=benchmark.upper(),
+            time_slice=time_slice,
+        )
         for cost_scenario in cost_scenarios
+        for benchmark in benchmarks
+        for time_slice in time_slices
         for topk in topks
         for n_drop in n_drops
     ]
 
 
 def experiment_name(base_name: str, spec: SweepSpec) -> str:
-    return f"{base_name}_topk{spec.topk}_drop{spec.n_drop}_cost_{spec.cost_scenario}"
+    suffix = f"topk{spec.topk}_drop{spec.n_drop}_cost_{spec.cost_scenario}"
+    if spec.benchmark != "SPY":
+        suffix = f"{suffix}_bench{spec.benchmark.lower()}"
+    if spec.time_slice != "full":
+        suffix = f"{suffix}_slice{spec.time_slice}"
+    return f"{base_name}_{suffix}"
 
 
 def apply_sweep_config(base_config: dict, spec: SweepSpec) -> dict:
@@ -61,11 +90,27 @@ def apply_sweep_config(base_config: dict, spec: SweepSpec) -> dict:
 
     exchange_kwargs = config["port_analysis_config"]["backtest"]["exchange_kwargs"]
     exchange_kwargs.update(COST_SCENARIOS[spec.cost_scenario])
+    if "benchmark" in config:
+        config["benchmark"] = spec.benchmark
+    config["port_analysis_config"]["backtest"]["benchmark"] = spec.benchmark
+
+    dates = TIME_SLICES[spec.time_slice]
+    if dates is not None:
+        start_time, end_time = dates
+        config["port_analysis_config"]["backtest"]["start_time"] = start_time
+        config["port_analysis_config"]["backtest"]["end_time"] = end_time
+        segments = config["task"]["dataset"]["kwargs"]["segments"]
+        segments["test"] = [start_time, end_time]
     return config
 
 
 def workflow_path(output_dir: Path, spec: SweepSpec) -> Path:
-    return output_dir / f"topk{spec.topk}_drop{spec.n_drop}_cost_{spec.cost_scenario}.yaml"
+    stem = f"topk{spec.topk}_drop{spec.n_drop}_cost_{spec.cost_scenario}"
+    if spec.benchmark != "SPY":
+        stem = f"{stem}_bench{spec.benchmark.lower()}"
+    if spec.time_slice != "full":
+        stem = f"{stem}_slice{spec.time_slice}"
+    return output_dir / f"{stem}.yaml"
 
 
 def write_workflow(base_config: dict, output_dir: Path, spec: SweepSpec) -> Path:
@@ -104,6 +149,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--topks", default=",".join(str(item) for item in DEFAULT_TOPKS), help="逗号分隔 topk")
     parser.add_argument("--n-drops", default=",".join(str(item) for item in DEFAULT_N_DROPS), help="逗号分隔 n_drop")
     parser.add_argument("--cost-scenarios", default="base", help=f"逗号分隔成本场景: {', '.join(COST_SCENARIOS)}")
+    parser.add_argument("--benchmarks", default=",".join(DEFAULT_BENCHMARKS), help="逗号分隔 benchmark，如 SPY,QQQ")
+    parser.add_argument("--time-slices", default="full", help=f"逗号分隔时间切片: {', '.join(TIME_SLICES)}")
     parser.add_argument("--dry-run", action="store_true", help="只生成 workflow，不运行 qlib")
     parser.add_argument("--keep-going", action="store_true", help="某组失败后继续运行后续组合")
     return parser.parse_args()
@@ -115,6 +162,8 @@ def main() -> int:
         topks=parse_int_list(args.topks),
         n_drops=parse_int_list(args.n_drops),
         cost_scenarios=parse_str_list(args.cost_scenarios),
+        benchmarks=parse_str_list(args.benchmarks),
+        time_slices=parse_str_list(args.time_slices),
     )
     base_config = load_yaml(args.base_config)
     failures: list[Path] = []

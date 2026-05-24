@@ -70,6 +70,12 @@ make report-runs
 make sweep-modern ARGS="--topks 10,15 --n-drops 1,2 --cost-scenarios half,zero"
 ```
 
+也可以切时间段或换 benchmark：
+
+```bash
+make sweep-modern ARGS="--topks 20 --n-drops 1 --cost-scenarios base --time-slices 2025h1,2025h2,2026ytd --benchmarks SPY,QQQ"
+```
+
 若要先做近年数据的小范围试验，可构建独立的现代 provider：
 
 ```bash
