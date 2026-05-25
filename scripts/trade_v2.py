@@ -211,10 +211,11 @@ def process_signals(
     elif dry_run:
         target_symbols = {order.get("symbol", "") for order in orders if order.get("side", "").lower() == "buy"}
         if len(target_symbols) > config.trading.max_open_positions:
-            logger.warning(
+            logger.error(
                 f"目标买入标的 {len(target_symbols)} 个超过持仓限制 {config.trading.max_open_positions}；"
-                "dry-run 无账户快照，提交前必须复核已有持仓"
+                "dry-run 观察单无效"
             )
+            return 1
 
     # 处理每个订单
     success_count = 0

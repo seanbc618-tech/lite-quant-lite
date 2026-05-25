@@ -4,19 +4,19 @@
 
 **Goal:** Align the `60% QQQ / 40% LightGBM` paper candidate with the configured ten-position execution guard.
 
-**Architecture:** Add a distinct `topk=9` Qlib satellite workflow and reuse the existing monitor, report combiner, and signal exporter with its experiment artifacts. Do not truncate orders after evaluation and do not loosen risk limits.
+**Architecture:** Test a distinct `topk=9` Qlib satellite against the configured limit, reject it if either performance or execution constraints fail, and make dry-run fail closed on position overflows. Do not truncate orders after evaluation and do not loosen risk limits.
 
 **Tech Stack:** Python 3.11, Qlib, YAML, Make, pytest.
 
 ---
 
-### Task 1: Capped Workflow Contract
+### Task 1: Capped Workflow Experiment
 
 **Files:**
 - Create: `config/qlib/workflow_lgb_alpha158_liquid100_modern_core_satellite_topk9.yaml`
 - Modify: `tests/test_modern_strategy_workflows.py`
 
-- [ ] **Step 1: Write the failing configuration test**
+- [x] **Step 1: Write the failing configuration test**
 
 Add the workflow to `MODERN_WORKFLOWS` and add this test:
 
@@ -31,7 +31,7 @@ def test_core_satellite_workflow_respects_execution_position_cap():
     assert strategy["hold_thresh"] == 3
 ```
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run:
 
@@ -41,7 +41,7 @@ MPLCONFIGDIR=/private/tmp/mplcache PYTHONPATH=src .venv/bin/python -m pytest -q 
 
 Expected: FAIL because `config/qlib/workflow_lgb_alpha158_liquid100_modern_core_satellite_topk9.yaml` does not exist.
 
-- [ ] **Step 3: Create the capped workflow**
+- [x] **Step 3: Create experimental capped workflows**
 
 Copy the existing low-turnover configuration content into the new workflow,
 retaining its provider, model, data windows, and cost settings. Change exactly
@@ -57,116 +57,110 @@ port_analysis_config: &port_analysis_config
         kwargs:
             signal: <PRED>
             topk: 9
-            n_drop: 1
+            n_drop: 2
             hold_thresh: 3
 ```
 
-- [ ] **Step 4: Run focused workflow tests**
+- [x] **Step 4: Run focused workflow tests and operational probes**
 
-Run the command from Step 2.
+Result: an ordinary TopK workflow exceeded the hard constraint; a strategy
+that prevented excess buys met the cap but failed benchmark validation. The
+experimental config and command wiring were therefore not retained.
 
-Expected: PASS.
-
-### Task 2: Capped Operational Commands
+### Task 2: Fail-Closed Paper Guard
 
 **Files:**
-- Modify: `Makefile`
-- Modify: `tests/test_modern_strategy_workflows.py`
+- Modify: `scripts/trade_v2.py`
+- Modify: `tests/test_trade_v2.py`
 
-- [ ] **Step 1: Write failing Make command assertions**
+- [x] **Step 1: Write the failing over-limit dry-run test**
 
-Extend `test_makefile_exposes_monitor_and_guarded_paper_preview_commands()`:
+Add a dry-run preview containing eleven distinct buy symbols and configure
+`max_open_positions=10`.
 
 ```python
-assert "CORE_SATELLITE_CONFIG := config/qlib/workflow_lgb_alpha158_liquid100_modern_core_satellite_topk9.yaml" in makefile
-assert "--base-config $(CORE_SATELLITE_CONFIG)" in makefile
-assert "--experiment-base $(CORE_SATELLITE_EXPERIMENT_BASE)" in makefile
-assert "--experiment-name $(CORE_SATELLITE_FULL_EXPERIMENT)" in makefile
+assert process_signals(None, signal_file, dry_run=True) == 1
 ```
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Verify the existing warning-only behavior fails the test**
 
 Run:
 
 ```bash
-MPLCONFIGDIR=/private/tmp/mplcache PYTHONPATH=src .venv/bin/python -m pytest -q tests/test_modern_strategy_workflows.py::test_makefile_exposes_monitor_and_guarded_paper_preview_commands
+MPLCONFIGDIR=/private/tmp/mplcache PYTHONPATH=src .venv/bin/python -m pytest -q tests/test_trade_v2.py
 ```
 
-Expected: FAIL because the current target still monitors the fifteen-name
-satellite artifact.
+Observed: FAIL because `process_signals(..., dry_run=True)` logged a warning
+but returned `0` for eleven targets.
 
-- [ ] **Step 3: Wire the command surface to capped artifacts**
+- [x] **Step 3: Fail closed when dry-run targets exceed the limit**
 
-Add these Make variables:
+Change the target-count warning in `scripts/trade_v2.py` to an error and
+return nonzero before simulated orders are accepted.
 
-```make
-CORE_SATELLITE_CONFIG := config/qlib/workflow_lgb_alpha158_liquid100_modern_core_satellite_topk9.yaml
-CORE_SATELLITE_EXPERIMENT_BASE := lightgbm_alpha158_liquid100_modern_core_satellite_topk9_deterministic_monitor_
-CORE_SATELLITE_FULL_EXPERIMENT := lightgbm_alpha158_liquid100_modern_core_satellite_topk9_deterministic_monitor_full_benchspy
-```
+- [x] **Step 4: Run focused execution tests**
 
-Update the targets:
-
-```make
-monitor-modern-core-satellite:
-	$(PYTHONPATH) $(PY) scripts/run_modern_candidate_monitor.py --base-config $(CORE_SATELLITE_CONFIG) --output-dir .cache/qlib_monitor/modern_core_satellite_topk9 --report .cache/reports/modern_core_satellite_satellite_latest.md --keep-going $(ARGS)
-	$(PYTHONPATH) $(PY) scripts/evaluate_core_satellite_candidate.py --experiment-base $(CORE_SATELLITE_EXPERIMENT_BASE)
-
-paper-dry-modern-core-satellite:
-	$(MAKE) monitor-modern-core-satellite
-	$(PYTHONPATH) $(PY) scripts/generate_candidate_paper_signals.py --experiment-name $(CORE_SATELLITE_FULL_EXPERIMENT) --output .cache/signals/modern_core_satellite_candidate_preview.json --budget $(PAPER_PREVIEW_BUDGET) --core-symbol QQQ --core-weight 0.6 $(SIGNAL_ARGS)
-	$(PYTHONPATH) $(PY) scripts/trade_v2.py --dry-run --signals .cache/signals/modern_core_satellite_candidate_preview.json
-```
-
-- [ ] **Step 4: Run focused command tests**
-
-Run both tests from Tasks 1 and 2.
-
-Expected: PASS.
+Observed: `tests/test_trade_v2.py` passed after the guard change.
 
 ### Task 3: Live Research And Dry-Run Verification
 
 **Files:**
 - Modify: `docs/superpowers/plans/2026-05-25-executable-core-satellite-cap.md`
 
-- [ ] **Step 1: Run the full test suite**
+- [x] **Step 1: Run the full test suite**
 
 ```bash
 MPLCONFIGDIR=/private/tmp/mplcache PYTHONPATH=src .venv/bin/python -m pytest -q
 ```
 
-Expected: all tests pass, allowing already-known third-party deprecation
-warnings only.
+Observed: `69 passed, 1 warning`; the warning is the existing third-party
+`websockets.legacy` deprecation.
 
-- [ ] **Step 2: Generate the capped eight-window report**
+- [x] **Step 2: Generate and assess capped eight-window reports**
 
 ```bash
 MPLCONFIGDIR=/private/tmp/mplcache make monitor-modern-core-satellite
 ```
 
-Expected: exit `0` and an updated
-`.cache/reports/modern_core_satellite_monitor_latest.md` generated from the
-`topk=9` experiment namespace.
+Observed: the hard-capped `hold_thresh=3` run obeyed nine satellite holdings,
+but QQQ composite excess after costs was negative for all four windows:
+`-5.82%`, `-15.22%`, `-3.35%`, and `-3.78%`.
 
-- [ ] **Step 3: Generate the constrained dry-run preview**
+- [x] **Step 3: Reproduce and reject the overflowing preview**
 
 ```bash
 MPLCONFIGDIR=/private/tmp/mplcache make paper-dry-modern-core-satellite
 ```
 
-Expected: exit `0`, `dry_run_only: true`, no warning that target buys exceed
-`max_open_positions=10`, and no more than ten buy orders in
-`.cache/signals/modern_core_satellite_candidate_preview.json`.
+Observed before the guard fix: the apparently stronger uncapped variant
+exported `11` target buy orders with a configured limit of `10`. This is a
+failed execution candidate, not an approval.
 
-- [ ] **Step 4: Record evidence and commit**
+- [x] **Step 4: Verify and commit the safety outcome**
 
-Append the actual report metrics, test count, and dry-run order count to this
-plan. Then run:
+Run the full tests and the over-limit dry-run reproduction after applying the
+guard. Then commit only the fail-closed execution change, its regression test,
+and this validation record.
 
 ```bash
-git add Makefile config/qlib/workflow_lgb_alpha158_liquid100_modern_core_satellite_topk9.yaml tests/test_modern_strategy_workflows.py docs/superpowers/plans/2026-05-25-executable-core-satellite-cap.md
-git commit -m "feat: cap core satellite paper holdings"
+git add scripts/trade_v2.py tests/test_trade_v2.py docs/superpowers/specs/2026-05-25-executable-core-satellite-cap-design.md docs/superpowers/plans/2026-05-25-executable-core-satellite-cap.md
+git commit -m "fix: reject oversized paper preview targets"
 ```
 
-Expected: a commit containing only the capped workflow, command wiring,
-tests, and verification record.
+Expected: no rejected strategy is wired into paper monitoring; over-limit
+previews stop with a nonzero result.
+
+### Verification Record (2026-05-26)
+
+- Requested GitHub publication completed first: `origin/main` advanced through
+  `fc5c1c9` before this investigation.
+- The executable candidate probe reproduced `11` buy targets while
+  `max_open_positions=10`.
+- After the fail-closed guard change, running `trade_v2.py --dry-run` against
+  that same generated preview returned nonzero and reported the position-limit
+  violation before simulating orders.
+- `MPLCONFIGDIR=/private/tmp/mplcache PYTHONPATH=src .venv/bin/python -m pytest -q`
+  completed with `69 passed, 1 warning`.
+- No capped LightGBM variant was promoted: the hard-capped `hold_thresh=3`
+  eight-window run failed all QQQ benchmark windows, and the `hold_thresh=1`
+  full-window probe failed both SPY and QQQ.
