@@ -8,7 +8,7 @@ MODERN_PROVIDER := $(HOME)/.qlib/qlib_data/us_modern_liquid100
 MODERN_MARKET := liquid100
 CSV_SOURCE := $(HOME)/.qlib/stock_data/source/us_data
 
-.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern sweep-modern value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2
+.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern qrun-modern-alpha360 qrun-modern-xgb qrun-modern-low sweep-modern value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2
 
 install:
 	$(PIP) install -r requirements.txt
@@ -90,7 +90,16 @@ qrun-alstm:
 	$(PY) -m qlib.cli.run config/qlib/workflow_alstm_alpha158_ndx.yaml
 
 qrun-modern:
-	$(PY) -m qlib.cli.run config/qlib/workflow_lgb_alpha158_liquid100_modern.yaml
+	$(PYTHONPATH) $(PY) -m qlib.cli.run config/qlib/workflow_lgb_alpha158_liquid100_modern.yaml
+
+qrun-modern-alpha360:
+	$(PYTHONPATH) $(PY) -m qlib.cli.run config/qlib/workflow_lgb_alpha360_liquid100_modern.yaml
+
+qrun-modern-xgb:
+	$(PYTHONPATH) $(PY) -m qlib.cli.run config/qlib/workflow_xgb_alpha158_liquid100_modern.yaml
+
+qrun-modern-low:
+	$(PYTHONPATH) $(PY) -m qlib.cli.run config/qlib/workflow_lgb_alpha158_liquid100_modern_low_turnover.yaml
 
 sweep-modern:
 	$(PYTHONPATH) $(PY) scripts/run_modern_param_sweep.py $(ARGS)

@@ -27,6 +27,9 @@ python3 -m venv .venv
 | `make modern-provider-from-all-csv ARGS=--overwrite` | 用本机 CSV 目录中全部可用标的构建现代 provider |
 | `make data-report-modern` | 检查小规模现代 provider 的日历、股票池和样本覆盖 |
 | `make sweep-modern ARGS="--cost-scenarios base"` | 跑现代 liquid100 参数矩阵，默认 `topk=10/15/20`、`n_drop=1/2/3` |
+| `make qrun-modern-alpha360` | 跑现代 liquid100 的 LightGBM + Alpha360 对照 |
+| `make qrun-modern-xgb` | 跑现代 liquid100 的 XGBoost + Alpha158 对照 |
+| `make qrun-modern-low` | 跑现代 liquid100 的低换手候选（Alpha158，`topk=15/n_drop=1/hold_thresh=3`） |
 | `make test` | 运行项目维护测试 |
 | `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
 | `make value-validate INPUT=examples/valuation/demo_stock.json` | 只校验估值 JSON 输入 |
@@ -45,6 +48,8 @@ python3 -m venv .venv
 | **Qlib 现代样本验证** | `make qrun-modern` | 读取 `~/.qlib/qlib_data/us_modern_liquid100`，用于验证现代数据链路 |
 
 较快迭代可用 **nasdaq100** 配置；全市场 SP500 用 `config/qlib/workflow_lightgbm_alpha158_us.yaml`（耗时更长）。现代样本验证用 `config/qlib/workflow_lgb_alpha158_liquid100_modern.yaml`。
+
+现代策略对照组可用 `make qrun-modern-alpha360`、`make qrun-modern-xgb`、`make qrun-modern-low`。这些命令使用同一个 modern liquid100 provider 和日期窗口，方便用 `make report-runs` 横向比较。`qrun-modern-low` 是经确定性扫参筛出的 paper/research 候选，仍需持续滚动验证，不能视为实盘结论。
 
 **注意**：官方 `us_data` 日线常止于约 **2020-11**；工作流中回测结束日已设为 **2020-10-30**，避免 Qlib 交易日历在末端的越界错误。
 
