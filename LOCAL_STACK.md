@@ -64,6 +64,12 @@ make data-report-modern
 # 现代 liquid100 参数矩阵
 make sweep-modern ARGS="--cost-scenarios base"
 
+# 低换手候选：按最新可评估交易日运行 SPY/QQQ 滚动压力报告
+make monitor-modern-low
+
+# 低换手候选：刷新最终组合并仅做受保护的 dry-run 预览
+make paper-dry-modern-low
+
 # 运行维护测试
 make test
 
@@ -101,6 +107,8 @@ make value-json INPUT=examples/valuation/demo_stock.json
 现代 provider 可用 `make qrun-modern` 做链路验证。当前现代 workflow 使用 SPY 作为 benchmark；它适合确认近年数据能跑通 Qlib，再逐步做策略参数对比。现代策略对照组为 `make qrun-modern-alpha360`、`make qrun-modern-xgb`、`make qrun-modern-low`，分别覆盖 Alpha360、XGBoost 和经筛选的低换手 LightGBM 候选（`topk=15`、`n_drop=1`、`hold_thresh=3`）。该候选用于 paper/research 跟踪，不能替代滚动验证和实盘风控。
 
 参数对比用 `make sweep-modern`，默认矩阵是 `topk=10/15/20` x `n_drop=1/2/3`，成本场景默认 `base`。它也支持 `--cost-scenarios base,half,zero`、`--benchmarks SPY,QQQ`、`--time-slices full,2025h1,2025h2,2026ytd`。临时 workflow 会写入 `.cache/qlib_sweeps/modern_liquid100/`，实验指标继续进入 `mlruns/`，用 `make report-runs` 汇总。
+
+候选持续观测用 `make monitor-modern-low`。它读取 modern provider 的最新交易日，因 Qlib 末端执行需要下一交易日而将安全评估截止日保留为倒数第二个 session，再自动生成 `full/63d/126d/252d` 窗口并同时对比 `SPY`、`QQQ`；最新场景表输出为 `.cache/reports/modern_low_monitor_latest.md`，其中会同时标注 provider 最新日和评估截止日。`make paper-dry-modern-low` 会先刷新 `SPY/full` 候选组合，再将最终目标权重按观察预算转换为 `.cache/signals/modern_low_candidate_preview.json`，交给 `trade_v2.py --dry-run` 打印。该 JSON 被标记为 `dry_run_only`，非 dry-run 执行会直接拒绝。
 
 **产物**：实验与指标默认写入项目根目录 **`mlruns/`**（MLflow 文件存储），已加入 `.gitignore`。
 

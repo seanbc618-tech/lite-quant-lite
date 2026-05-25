@@ -109,3 +109,13 @@ def test_xgb_workflow_does_not_include_lgb_only_parameters():
     model = workflow["task"]["model"]["kwargs"]
 
     assert "num_leaves" not in model
+
+
+def test_makefile_exposes_monitor_and_guarded_paper_preview_commands():
+    makefile = Path("Makefile").read_text(encoding="utf-8")
+
+    assert "monitor-modern-low:" in makefile
+    assert "scripts/run_modern_candidate_monitor.py --keep-going" in makefile
+    assert "paper-dry-modern-low:" in makefile
+    assert "scripts/generate_candidate_paper_signals.py" in makefile
+    assert "scripts/trade_v2.py --dry-run --signals .cache/signals/modern_low_candidate_preview.json" in makefile

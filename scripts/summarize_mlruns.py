@@ -31,6 +31,7 @@ class RunSummary:
     run_id: str
     status: str
     command: str
+    end_time: int = 0
     ic: float | None = None
     rank_ic: float | None = None
     ann_excess_cost: float | None = None
@@ -95,6 +96,7 @@ def collect_runs(mlruns_dir: Path) -> list[RunSummary]:
                     run_id=run_dir.name,
                     status=STATUS_MAP.get(raw_status, raw_status or "UNKNOWN"),
                     command=read_text_file(run_dir / "params" / "cmd-sys.argv"),
+                    end_time=int(run_meta.get("end_time") or 0),
                     **metrics,
                 )
             )
@@ -167,4 +169,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

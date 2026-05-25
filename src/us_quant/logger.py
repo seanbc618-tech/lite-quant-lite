@@ -17,6 +17,13 @@ if TYPE_CHECKING:
 logger.remove()
 
 
+def resolve_log_output(format_str: str | None) -> tuple[str | None, bool]:
+    """Map the documented JSON mode to Loguru's structured serialization."""
+    if format_str and format_str.strip().lower() == "json":
+        return "{message}", True
+    return format_str, False
+
+
 def setup_logging(
     level: str = "INFO",
     log_dir: str | Path = "logs",
@@ -47,6 +54,7 @@ def setup_logging(
             "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | "
             "{name}:{function}:{line} | {message}"
         )
+    format_str, serialize = resolve_log_output(format_str)
 
     # 控制台输出
     if console:
@@ -55,6 +63,7 @@ def setup_logging(
             level=level,
             format=format_str,
             colorize=True,
+            serialize=serialize,
             enqueue=True,
         )
 
@@ -65,6 +74,7 @@ def setup_logging(
             str(log_file),
             level=level,
             format=format_str,
+            serialize=serialize,
             rotation=rotation,
             retention=retention,
             compression="gz",
@@ -79,6 +89,7 @@ def setup_logging(
             str(error_file),
             level="ERROR",
             format=format_str,
+            serialize=serialize,
             rotation=rotation,
             retention=retention,
             compression="gz",

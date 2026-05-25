@@ -186,6 +186,9 @@ def process_signals(
         if not orders:
             logger.warning("信号文件中没有订单")
             return 0
+        if data.get("dry_run_only") and not dry_run:
+            logger.error("候选策略观察单仅允许 --dry-run，拒绝提交订单")
+            return 1
     except (json.JSONDecodeError, FileNotFoundError) as e:
         logger.error(f"读取信号文件失败: {e}")
         return 1
