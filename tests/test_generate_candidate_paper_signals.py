@@ -6,6 +6,7 @@ import subprocess
 import sys
 
 import pandas as pd
+import pytest
 
 from scripts.generate_candidate_paper_signals import build_preview_payload, find_latest_positions_artifact
 
@@ -62,6 +63,39 @@ def test_build_preview_payload_accepts_qlib_position_object():
         {"symbol": "AAPL", "side": "buy", "notional": 2000.0},
         {"symbol": "MSFT", "side": "buy", "notional": 1000.0},
     ]
+
+
+def test_build_preview_payload_adds_passive_core_and_scales_satellite_budget():
+    positions = {pd.Timestamp("2026-05-22"): FakeQlibPosition()}
+
+    payload = build_preview_payload(
+        positions,
+        Path("positions.pkl"),
+        budget=1000.0,
+        core_symbol="QQQ",
+        core_weight=0.6,
+    )
+
+    assert payload["strategy"] == "modern_low_qqq_core_satellite_candidate"
+    assert payload["allocation"] == {"core_symbol": "QQQ", "core_weight": 0.6, "satellite_weight": 0.4}
+    assert payload["orders"] == [
+        {"symbol": "QQQ", "side": "buy", "notional": 600.0},
+        {"symbol": "AAPL", "side": "buy", "notional": 266.67},
+        {"symbol": "MSFT", "side": "buy", "notional": 133.33},
+    ]
+
+
+def test_build_preview_payload_rejects_invalid_core_weight():
+    positions = {pd.Timestamp("2026-05-22"): FakeQlibPosition()}
+
+    with pytest.raises(ValueError, match="core_weight"):
+        build_preview_payload(
+            positions,
+            Path("positions.pkl"),
+            budget=1000.0,
+            core_symbol="QQQ",
+            core_weight=1.0,
+        )
 
 
 def test_find_latest_positions_artifact_selects_newest_finished_matching_experiment(tmp_path):

@@ -51,9 +51,19 @@ def extract_weighted_holdings(snapshot: Any) -> list[tuple[str, float]]:
     ]
 
 
-def build_preview_payload(positions: dict[Any, Any], source_artifact: Path, budget: float) -> dict[str, Any]:
+def build_preview_payload(
+    positions: dict[Any, Any],
+    source_artifact: Path,
+    budget: float,
+    core_symbol: str | None = None,
+    core_weight: float = 0.0,
+) -> dict[str, Any]:
     if budget <= 0:
         raise ValueError("budget must be positive")
+    if core_symbol is None and core_weight != 0:
+        raise ValueError("core_symbol is required when core_weight is set")
+    if core_symbol is not None and not 0 < core_weight < 1:
+        raise ValueError("core_weight must be between 0 and 1")
     if not positions:
         raise ValueError("positions artifact is empty")
     latest_date = max(positions)
@@ -61,24 +71,38 @@ def build_preview_payload(positions: dict[Any, Any], source_artifact: Path, budg
     if not holdings:
         raise ValueError("latest portfolio has no investable holdings")
     invested_weight = sum(weight for _, weight in holdings)
+    satellite_budget = budget * (1 - core_weight if core_symbol else 1)
     orders = [
         {
             "symbol": symbol,
             "side": "buy",
-            "notional": round(budget * weight / invested_weight, 2),
+            "notional": round(satellite_budget * weight / invested_weight, 2),
         }
         for symbol, weight in sorted(holdings, key=lambda item: (-item[1], item[0]))
     ]
-    return {
+    strategy = "modern_low_turnover_candidate"
+    allocation: dict[str, Any] | None = None
+    if core_symbol:
+        orders.insert(0, {"symbol": core_symbol, "side": "buy", "notional": round(budget * core_weight, 2)})
+        strategy = "modern_low_qqq_core_satellite_candidate"
+        allocation = {
+            "core_symbol": core_symbol,
+            "core_weight": core_weight,
+            "satellite_weight": 1 - core_weight,
+        }
+    payload = {
         "version": 1,
         "dry_run_only": True,
         "date": latest_date.strftime("%Y-%m-%d"),
         "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "strategy": "modern_low_turnover_candidate",
+        "strategy": strategy,
         "source_artifact": str(source_artifact),
         "preview_budget": budget,
         "orders": orders,
     }
+    if allocation is not None:
+        payload["allocation"] = allocation
+    return payload
 
 
 def parse_args() -> argparse.Namespace:
@@ -88,6 +112,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--positions-artifact", type=Path)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--budget", type=float, default=10_000.0)
+    parser.add_argument("--core-symbol")
+    parser.add_argument("--core-weight", type=float, default=0.0)
     return parser.parse_args()
 
 
@@ -96,7 +122,13 @@ def main() -> int:
     artifact = args.positions_artifact or find_latest_positions_artifact(args.mlruns, args.experiment_name)
     with artifact.open("rb") as handle:
         positions = pickle.load(handle)
-    payload = build_preview_payload(positions, artifact, args.budget)
+    payload = build_preview_payload(
+        positions,
+        artifact,
+        args.budget,
+        core_symbol=args.core_symbol,
+        core_weight=args.core_weight,
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(f"Candidate preview: {args.output}")

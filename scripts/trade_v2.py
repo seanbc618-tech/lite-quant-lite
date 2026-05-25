@@ -108,7 +108,7 @@ def risk_check_account(client: TradingClient | None) -> None:
 
 
 def risk_check_order(
-    client: TradingClient,
+    client: TradingClient | None,
     symbol: str,
     side: str,
     notional: float | None,
@@ -128,8 +128,11 @@ def risk_check_order(
         raise ValueError(f"{symbol}: 数量必须为正数")
 
     # 检查持仓限制
-    if positions is None:
+    if positions is None and client is not None:
         positions = client.get_all_positions()
+
+    if positions is None:
+        return
 
     sym_have = {p.symbol for p in positions}
     if side.lower() == "buy" and symbol not in sym_have and len(positions) >= max_positions:
@@ -205,6 +208,13 @@ def process_signals(
     if client:
         positions = client.get_all_positions()
         logger.info(f"当前持仓: {len(positions)} 个标的")
+    elif dry_run:
+        target_symbols = {order.get("symbol", "") for order in orders if order.get("side", "").lower() == "buy"}
+        if len(target_symbols) > config.trading.max_open_positions:
+            logger.warning(
+                f"目标买入标的 {len(target_symbols)} 个超过持仓限制 {config.trading.max_open_positions}；"
+                "dry-run 无账户快照，提交前必须复核已有持仓"
+            )
 
     # 处理每个订单
     success_count = 0
@@ -231,13 +241,12 @@ def process_signals(
 
         # 风控检查
         try:
-            if client:
-                risk_check_order(
-                    client, symbol, side,
-                    float(notional) if notional else None,
-                    float(qty) if qty else None,
-                    positions,
-                )
+            risk_check_order(
+                client, symbol, side,
+                float(notional) if notional else None,
+                float(qty) if qty else None,
+                positions,
+            )
         except ValueError as e:
             logger.error(f"风控拦截: {e}")
             failed_count += 1

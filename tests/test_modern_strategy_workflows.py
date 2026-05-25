@@ -119,3 +119,8 @@ def test_makefile_exposes_monitor_and_guarded_paper_preview_commands():
     assert "paper-dry-modern-low:" in makefile
     assert "scripts/generate_candidate_paper_signals.py" in makefile
     assert "scripts/trade_v2.py --dry-run --signals .cache/signals/modern_low_candidate_preview.json" in makefile
+    assert "monitor-modern-core-satellite:" in makefile
+    assert "scripts/evaluate_core_satellite_candidate.py" in makefile
+    assert "paper-dry-modern-core-satellite:" in makefile
+    assert "--core-symbol QQQ --core-weight 0.6" in makefile
+    assert "scripts/trade_v2.py --dry-run --signals .cache/signals/modern_core_satellite_candidate_preview.json" in makefile

@@ -7,8 +7,9 @@ PYTHONPATH := PYTHONPATH=src
 MODERN_PROVIDER := $(HOME)/.qlib/qlib_data/us_modern_liquid100
 MODERN_MARKET := liquid100
 CSV_SOURCE := $(HOME)/.qlib/stock_data/source/us_data
+PAPER_PREVIEW_BUDGET ?= 1000
 
-.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern qrun-modern-alpha360 qrun-modern-xgb qrun-modern-low sweep-modern monitor-modern-low value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2 paper-dry-modern-low
+.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern qrun-modern-alpha360 qrun-modern-xgb qrun-modern-low sweep-modern monitor-modern-low monitor-modern-core-satellite value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2 paper-dry-modern-low paper-dry-modern-core-satellite
 
 install:
 	$(PIP) install -r requirements.txt
@@ -107,6 +108,10 @@ sweep-modern:
 monitor-modern-low:
 	$(PYTHONPATH) $(PY) scripts/run_modern_candidate_monitor.py --keep-going $(ARGS)
 
+monitor-modern-core-satellite:
+	$(PYTHONPATH) $(PY) scripts/run_modern_candidate_monitor.py --keep-going $(ARGS)
+	$(PYTHONPATH) $(PY) scripts/evaluate_core_satellite_candidate.py
+
 # 估值探针
 value:
 	$(PYTHONPATH) $(PY) scripts/value_stock.py $(SYMBOL)
@@ -139,5 +144,11 @@ paper-dry-v2:
 # 低换手候选：刷新最新组合后，仅做 paper dry-run 观察
 paper-dry-modern-low:
 	$(PYTHONPATH) $(PY) scripts/run_modern_candidate_monitor.py --benchmarks SPY --windows full --report .cache/reports/modern_low_paper_snapshot.md
-	$(PYTHONPATH) $(PY) scripts/generate_candidate_paper_signals.py --output .cache/signals/modern_low_candidate_preview.json $(SIGNAL_ARGS)
+	$(PYTHONPATH) $(PY) scripts/generate_candidate_paper_signals.py --output .cache/signals/modern_low_candidate_preview.json --budget $(PAPER_PREVIEW_BUDGET) $(SIGNAL_ARGS)
 	$(PYTHONPATH) $(PY) scripts/trade_v2.py --dry-run --signals .cache/signals/modern_low_candidate_preview.json
+
+# QQQ 核心 + LightGBM 卫星候选：仅供 dry-run 持续观察
+paper-dry-modern-core-satellite:
+	$(MAKE) monitor-modern-core-satellite
+	$(PYTHONPATH) $(PY) scripts/generate_candidate_paper_signals.py --output .cache/signals/modern_core_satellite_candidate_preview.json --budget $(PAPER_PREVIEW_BUDGET) --core-symbol QQQ --core-weight 0.6 $(SIGNAL_ARGS)
+	$(PYTHONPATH) $(PY) scripts/trade_v2.py --dry-run --signals .cache/signals/modern_core_satellite_candidate_preview.json
