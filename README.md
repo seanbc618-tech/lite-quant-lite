@@ -27,6 +27,7 @@ python3 -m venv .venv
 | `make modern-provider-from-all-csv ARGS=--overwrite` | 用本机 CSV 目录中全部可用标的构建现代 provider |
 | `make data-report-modern` | 检查小规模现代 provider 的日历、股票池和样本覆盖 |
 | `make fundamentals-sec ARGS="--symbols AAPL,MSFT,NVDA"` | 从 SEC 缓存/接口构建 point-in-time 基本面与质量覆盖报告 |
+| `make quality-satellite` | 用 TTM 质量层运行独立月度九仓卫星研究报告（不进入 paper） |
 | `make sweep-modern ARGS="--cost-scenarios base"` | 跑现代 liquid100 参数矩阵，默认 `topk=10/15/20`、`n_drop=1/2/3` |
 | `make qrun-modern-alpha360` | 跑现代 liquid100 的 LightGBM + Alpha360 对照 |
 | `make qrun-modern-xgb` | 跑现代 liquid100 的 XGBoost + Alpha158 对照 |
@@ -154,6 +155,21 @@ SEC_USER_AGENT="lite-quant-lite research contact@example.com" \
 具备 `cash_conversion_ttm`，杠杆覆盖由申报负债可得的 69 只扩展为 91 只，
 其中 22 只清楚标记为推导值。本阶段只完善数据层和覆盖报告，不直接将质量
 因子接入策略或 paper 监控。
+
+完成 TTM 覆盖验收后，可运行独立的质量卫星研究试验：
+
+```bash
+make quality-satellite
+```
+
+该试验每月仅使用前一交易日已可见的 SEC 快照，按 `roe_ttm`、TTM 现金
+转换率和杠杆排名选择最多 9 只等权股票，并分别评估含推导杠杆和仅申报
+杠杆两种版本。报告写入
+`.cache/reports/quality_satellite_candidate_latest.md`，最新持仓审计表写入
+`.cache/quality_satellite/latest_holdings.parquet`。它是独立研究报告，
+不会生成 paper 订单或改变现有 LightGBM 监控。报告的比较窗口会读取现有
+LightGBM monitor 的安全截止日，并明确列出 provider 中 benchmark 缺价
+及与 Qlib 一致的处理口径。
 
 同一完整股票池的日常报告刷新会复用已经生成的
 `.cache/fundamentals/sec_facts.parquet`。解析规则变化后可从原始 SEC

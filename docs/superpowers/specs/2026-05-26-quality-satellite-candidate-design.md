@@ -93,6 +93,10 @@ experiments.
 - Transaction cost uses the established workflow rates: `0.0005` on buys and
   `0.0015` on sells. The report includes net returns after costs.
 - Cash earns zero return.
+- If the modern provider contains a missing benchmark close, the report
+  exposes the affected session and applies the same explicit zero benchmark
+  return used by existing Qlib portfolio reports. It never silently
+  forward-fills the gap.
 
 This is a deterministic research backtest, not a Qlib ML run. Its output must
 use clearly named local `.cache/` reports and holding artifacts rather than
@@ -112,9 +116,11 @@ summary, latest holding count, and the percentage of latest base holdings
 whose leverage was derived. It also includes an auditable latest-holdings
 table with scores and provenance.
 
-The `full` window starts at the first executable quality portfolio generated
-by the runner; fixed trailing windows end on the latest safely return-bearing
-provider session.
+The comparison `full` window starts at `2025-01-02`, matching the existing
+LightGBM monitor test horizon; all comparison windows end on that monitor's
+latest safely evaluable session. Earlier quality portfolios may exist in the
+daily simulation to establish drifted holdings at the comparison start, but
+they are not counted in the comparison metrics.
 
 ## Promotion Gate
 
