@@ -86,7 +86,8 @@
 make monitor-quality-satellite
 ```
 
-它将读取已经生成的基本面快照与 modern provider 价格，重新生成：
+它将先刷新同一 modern provider 截止日上的现有 LightGBM monitor 作为
+比较基线，再读取已经生成的基本面快照与 provider 价格，重新生成：
 
 - `base` 与 `reported_only` 两种变体；
 - `SPY` 与 `QQQ` 两个 benchmark；
@@ -100,8 +101,9 @@ make monitor-quality-satellite
 .cache/quality_satellite/latest_holdings.parquet
 ```
 
-监控命令不自动访问 SEC。这样每次压力测试都可复现，数据刷新行为也不会
-隐含在一次普通报告运行里。
+监控命令不自动访问 SEC。LightGBM 对照刷新仅使用本地 modern provider，
+这样每次质量门槛判断都有同时点基线，基本面数据刷新行为也不会隐含在一次
+普通报告运行里。
 
 ### 2. 隔离式 Paper-Dry 观察
 

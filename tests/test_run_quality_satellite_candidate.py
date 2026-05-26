@@ -193,6 +193,7 @@ def test_render_report_contains_sixteen_stress_rows_and_research_gate():
     assert "research-only; it is not approved for paper execution" in report
     assert "derived_assets_minus_equity" in report
     assert "## Promotion Gate" in report
+    assert "promotion_gate: PASS" in report
     assert "benchmark_missing_policy: explicit Qlib-compatible zero benchmark return" in report
 
 

@@ -361,6 +361,7 @@ def render_report(
     missing_benchmark_sessions: list[pd.Timestamp] | None = None,
 ) -> str:
     """Render a research-only quality candidate stress report."""
+    promotion_status = "PASS" if all(check.passed for check in checks) else "FAIL"
     derived_share = 0.0
     base = latest_holdings.loc[latest_holdings["variant"] == "base"] if not latest_holdings.empty else latest_holdings
     if not base.empty:
@@ -370,6 +371,7 @@ def render_report(
     lines = [
         "# Independent Quality Satellite Candidate Report",
         "",
+        f"promotion_gate: {promotion_status}",
         f"latest_provider_session: {latest_session}",
         f"latest_evaluable_session: {evaluation_session or latest_session}",
         f"comparison_full_start: {full_start}",

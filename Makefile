@@ -9,7 +9,7 @@ MODERN_MARKET := liquid100
 CSV_SOURCE := $(HOME)/.qlib/stock_data/source/us_data
 PAPER_PREVIEW_BUDGET ?= 1000
 
-.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv fundamentals-sec quality-satellite verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern qrun-modern-alpha360 qrun-modern-xgb qrun-modern-low sweep-modern monitor-modern-low monitor-modern-core-satellite value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2 paper-dry-modern-low paper-dry-modern-core-satellite
+.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv fundamentals-sec quality-satellite monitor-quality-satellite verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern qrun-modern-alpha360 qrun-modern-xgb qrun-modern-low sweep-modern monitor-modern-low monitor-modern-core-satellite value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2 paper-dry-modern-low paper-dry-modern-core-satellite paper-dry-quality-satellite
 
 install:
 	$(PIP) install -r requirements.txt
@@ -37,6 +37,10 @@ fundamentals-sec:
 
 quality-satellite:
 	$(PYTHONPATH) $(PY) scripts/run_quality_satellite_candidate.py --provider-uri $(MODERN_PROVIDER) $(ARGS)
+
+monitor-quality-satellite:
+	$(MAKE) monitor-modern-low
+	$(PYTHONPATH) $(PY) scripts/run_quality_satellite_candidate.py --provider-uri $(MODERN_PROVIDER) --report .cache/reports/quality_satellite_monitor_latest.md $(ARGS)
 
 verify:
 	$(PY) scripts/verify_data_sources.py
@@ -158,3 +162,9 @@ paper-dry-modern-core-satellite:
 	$(MAKE) monitor-modern-core-satellite
 	$(PYTHONPATH) $(PY) scripts/generate_candidate_paper_signals.py --output .cache/signals/modern_core_satellite_candidate_preview.json --budget $(PAPER_PREVIEW_BUDGET) --core-symbol QQQ --core-weight 0.6 $(SIGNAL_ARGS)
 	$(PYTHONPATH) $(PY) scripts/trade_v2.py --dry-run --signals .cache/signals/modern_core_satellite_candidate_preview.json
+
+# SEC reported-only 质量候选：隔离式持续观察，不改变现有 ML 候选
+paper-dry-quality-satellite:
+	$(MAKE) monitor-quality-satellite
+	$(PYTHONPATH) $(PY) scripts/generate_quality_paper_signals.py --budget $(PAPER_PREVIEW_BUDGET) $(SIGNAL_ARGS)
+	$(PYTHONPATH) $(PY) scripts/trade_v2.py --dry-run --signals .cache/signals/quality_reported_only_candidate_preview.json

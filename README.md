@@ -28,6 +28,7 @@ python3 -m venv .venv
 | `make data-report-modern` | 检查小规模现代 provider 的日历、股票池和样本覆盖 |
 | `make fundamentals-sec ARGS="--symbols AAPL,MSFT,NVDA"` | 从 SEC 缓存/接口构建 point-in-time 基本面与质量覆盖报告 |
 | `make quality-satellite` | 用 TTM 质量层运行独立月度九仓卫星研究报告（不进入 paper） |
+| `make monitor-quality-satellite` | 刷新 LightGBM 同期基线并运行质量候选双 benchmark 压力报告 |
 | `make sweep-modern ARGS="--cost-scenarios base"` | 跑现代 liquid100 参数矩阵，默认 `topk=10/15/20`、`n_drop=1/2/3` |
 | `make qrun-modern-alpha360` | 跑现代 liquid100 的 LightGBM + Alpha360 对照 |
 | `make qrun-modern-xgb` | 跑现代 liquid100 的 XGBoost + Alpha158 对照 |
@@ -36,6 +37,7 @@ python3 -m venv .venv
 | `make test` | 运行项目维护测试 |
 | `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
 | `make paper-dry-modern-low` | 刷新低换手候选最新组合并仅做受保护的 dry-run 观察 |
+| `make paper-dry-quality-satellite` | 仅将 `reported_only` 质量候选导出为受保护的 dry-run 观察单 |
 | `make value-validate INPUT=examples/valuation/demo_stock.json` | 只校验估值 JSON 输入 |
 | `make value-json INPUT=examples/valuation/demo_stock.json` | 离线估值探针，读取 JSON 基本面输入 |
 | `make report-runs` | 汇总本地 `mlruns/` 中的 Qlib 实验指标 |
@@ -170,6 +172,20 @@ make quality-satellite
 不会生成 paper 订单或改变现有 LightGBM 监控。报告的比较窗口会读取现有
 LightGBM monitor 的安全截止日，并明确列出 provider 中 benchmark 缺价
 及与 Qlib 一致的处理口径。
+
+当前通过压力门槛的两种质量变体中，持续观察主候选为
+`reported_only`：它只使用 SEC 直接申报的杠杆来源，不依赖推导负债值。
+运行 `make monitor-quality-satellite` 会先刷新同一 modern provider 截止
+日上的 LightGBM 对照，再将质量报告写入
+`.cache/reports/quality_satellite_monitor_latest.md`；该流程不会联网刷新
+SEC 数据。需要纳入新申报时，应先显式运行 `make fundamentals-sec`。
+
+运行 `make paper-dry-quality-satellite` 时，系统只在最新质量报告仍为
+`PASS`、`reported_only` 持仓不超过 9 只且杠杆来源全部为直接申报时，
+生成 `.cache/signals/quality_reported_only_candidate_preview.json`，随后
+交由 `trade_v2.py --dry-run` 读取。该预览带有 `dry_run_only` 防护，不会
+更改 LightGBM 候选输出，也不能用于下单。完整的策略解释与停止观察条件见
+`docs/superpowers/specs/2026-05-26-quality-satellite-observation-design.md`。
 
 同一完整股票池的日常报告刷新会复用已经生成的
 `.cache/fundamentals/sec_facts.parquet`。解析规则变化后可从原始 SEC
