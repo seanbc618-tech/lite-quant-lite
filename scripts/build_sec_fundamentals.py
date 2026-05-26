@@ -110,6 +110,7 @@ def parse_symbols(value: str | None) -> list[str] | None:
 def render_quality_report(summary: FundamentalsBuildSummary, facts: pd.DataFrame, daily: pd.DataFrame) -> str:
     coverage_rows: list[str] = []
     metric_rows: list[str] = []
+    ttm_rows: list[str] = []
     for symbol in summary.requested_symbols:
         selected = facts.loc[facts["ticker"] == symbol] if not facts.empty else facts
         fields = ", ".join(sorted(selected["field"].unique())) if not selected.empty else "missing"
@@ -118,13 +119,22 @@ def render_quality_report(summary: FundamentalsBuildSummary, facts: pd.DataFrame
         snapshots = daily.loc[daily["ticker"] == symbol] if not daily.empty else daily
         if snapshots.empty:
             metric_rows.append(f"| {symbol} | 0 | - | - | - | - |")
+            ttm_rows.append(f"| {symbol} | 0 | - | - | - | - | - | - |")
             continue
         metric_coverage = snapshots[["roe", "cash_conversion", "debt_to_assets"]].notna().mean().mul(100)
+        ttm_coverage = snapshots[["roe_ttm", "cash_conversion_ttm", "debt_to_assets"]].notna().mean().mul(100)
+        derived_leverage = snapshots["debt_to_assets_source"].eq("derived_assets_minus_equity").mean() * 100
         latest_snapshot = snapshots.sort_values("session").iloc[-1]
         metric_rows.append(
             f"| {symbol} | {len(snapshots)} | {metric_coverage['roe']:.1f}% | "
             f"{metric_coverage['cash_conversion']:.1f}% | {metric_coverage['debt_to_assets']:.1f}% | "
             f"{latest_snapshot['fiscal_period']} |"
+        )
+        ttm_rows.append(
+            f"| {symbol} | {len(snapshots)} | {ttm_coverage['roe_ttm']:.1f}% | "
+            f"{ttm_coverage['cash_conversion_ttm']:.1f}% | {ttm_coverage['debt_to_assets']:.1f}% | "
+            f"{derived_leverage:.1f}% | {latest_snapshot['ttm_source']} | "
+            f"{latest_snapshot['debt_to_assets_source']} |"
         )
     errors = "\n".join(f"- {item}" for item in summary.errors) or "- none"
     return "\n".join(
@@ -152,9 +162,16 @@ def render_quality_report(summary: FundamentalsBuildSummary, facts: pd.DataFrame
             "| --- | ---: | ---: | ---: | ---: | --- |",
             *metric_rows,
             "",
-            "Income and operating-cash-flow ratios retain each filing's reported",
-            "fiscal-period span. A cross-symbol quality ranking requires",
-            "period-normalized metrics, such as trailing-twelve-month values.",
+            "## TTM Quality Coverage",
+            "",
+            "| Symbol | Sessions | TTM ROE | TTM Cash conversion | Leverage | Derived leverage | Latest TTM source | Latest leverage source |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | --- | --- |",
+            *ttm_rows,
+            "",
+            "TTM fields use reported fiscal years or the audited FY plus current YTD",
+            "minus prior-year comparable YTD bridge. Leverage uses reported liabilities",
+            "when present and otherwise records the assets-minus-equity derivation.",
+            "This quality layer is not promoted into a strategy workflow in this milestone.",
             "",
             "## Retrieval Errors",
             "",

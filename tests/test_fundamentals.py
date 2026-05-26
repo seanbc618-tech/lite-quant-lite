@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from us_quant.fundamentals import (
+    FACT_COLUMNS,
     build_cik_mapping,
     build_daily_quality_snapshot,
     extract_canonical_facts,
@@ -96,6 +97,88 @@ def ifrs_fixture() -> dict:
             }
         }
     }
+
+
+def canonical_fact(
+    field: str,
+    value: float,
+    *,
+    filed: str,
+    accession: str,
+    form: str,
+    fiscal_period: str,
+    period_start: str | None,
+    period_end: str,
+) -> dict:
+    return {
+        "ticker": "DEMO",
+        "cik": "0000000001",
+        "field": field,
+        "value": value,
+        "unit": "USD",
+        "form": form,
+        "fiscal_period": fiscal_period,
+        "period_start": pd.to_datetime(period_start),
+        "period_end": pd.to_datetime(period_end),
+        "filed_date": pd.to_datetime(filed),
+        "accession_number": accession,
+        "tag": field,
+    }
+
+
+def bridge_facts(*, include_prior_fy: bool = True, include_liabilities: bool = True) -> pd.DataFrame:
+    rows: list[dict] = []
+    if include_prior_fy:
+        rows.extend(
+            canonical_fact(
+                field,
+                value,
+                filed="2025-02-15",
+                accession="fy-2024",
+                form="10-K",
+                fiscal_period="FY",
+                period_start="2024-01-01" if field in {"revenue", "net_income", "operating_cash_flow"} else None,
+                period_end="2024-12-31",
+            )
+            for field, value in {
+                "revenue": 400.0,
+                "net_income": 100.0,
+                "operating_cash_flow": 120.0,
+                "total_assets": 350.0,
+                "total_liabilities": 140.0,
+                "stockholders_equity": 210.0,
+            }.items()
+        )
+    for period_end, values in (
+        ("2024-06-30", {"revenue": 190.0, "net_income": 60.0, "operating_cash_flow": 65.0}),
+        (
+            "2025-06-30",
+            {
+                "revenue": 230.0,
+                "net_income": 70.0,
+                "operating_cash_flow": 80.0,
+                "total_assets": 400.0,
+                "stockholders_equity": 200.0,
+                **({"total_liabilities": 150.0} if include_liabilities else {}),
+            },
+        ),
+    ):
+        rows.extend(
+            canonical_fact(
+                field,
+                value,
+                filed="2025-08-01",
+                accession="q2-2025",
+                form="10-Q",
+                fiscal_period="Q2",
+                period_start=f"{period_end[:4]}-01-01"
+                if field in {"revenue", "net_income", "operating_cash_flow"}
+                else None,
+                period_end=period_end,
+            )
+            for field, value in values.items()
+        )
+    return pd.DataFrame(rows, columns=FACT_COLUMNS)
 
 
 def test_build_cik_mapping_reads_official_fields_data_shape_and_pads_values():
@@ -259,3 +342,62 @@ def test_daily_quality_snapshot_aligns_duration_metrics_to_longest_same_period_w
     daily = build_daily_quality_snapshot(facts, ["2025-04-25"])
 
     assert daily.loc[0, "cash_conversion"] == 1.2
+
+
+def test_daily_quality_snapshot_emits_direct_fy_and_quarterly_ttm_bridge():
+    daily = build_daily_quality_snapshot(bridge_facts(), ["2025-02-15", "2025-08-01"])
+    fiscal_year = daily.loc[daily["session"] == pd.Timestamp("2025-02-15")].iloc[0]
+    quarter = daily.loc[daily["session"] == pd.Timestamp("2025-08-01")].iloc[0]
+
+    assert fiscal_year["ttm_source"] == "reported_fy"
+    assert fiscal_year["net_income_ttm"] == 100.0
+    assert quarter["ttm_source"] == "fy_plus_ytd_bridge"
+    assert quarter["revenue_ttm"] == 440.0
+    assert quarter["net_income_ttm"] == 110.0
+    assert quarter["operating_cash_flow_ttm"] == 135.0
+    assert quarter["roe_ttm"] == 0.55
+    assert quarter["cash_conversion_ttm"] == 135.0 / 110.0
+
+
+def test_daily_quality_snapshot_leaves_ttm_missing_when_bridge_has_no_prior_fy():
+    daily = build_daily_quality_snapshot(bridge_facts(include_prior_fy=False), ["2025-08-01"])
+    quarter = daily.iloc[0]
+
+    assert pd.isna(quarter["net_income_ttm"])
+    assert quarter["ttm_source"] == "missing"
+
+
+def test_daily_quality_snapshot_does_not_bridge_with_future_fiscal_year_filing():
+    facts = bridge_facts()
+    facts.loc[facts["accession_number"] == "fy-2024", "filed_date"] = pd.Timestamp("2025-08-02")
+
+    daily = build_daily_quality_snapshot(facts, ["2025-08-01"])
+
+    assert pd.isna(daily.loc[0, "net_income_ttm"])
+    assert daily.loc[0, "ttm_source"] == "missing"
+
+
+def test_daily_quality_snapshot_records_bridge_source_when_only_some_ttm_fields_are_available():
+    facts = bridge_facts()
+    facts = facts.loc[facts["field"] != "revenue"]
+
+    daily = build_daily_quality_snapshot(facts, ["2025-08-01"])
+
+    assert pd.isna(daily.loc[0, "revenue_ttm"])
+    assert daily.loc[0, "net_income_ttm"] == 110.0
+    assert daily.loc[0, "ttm_source"] == "fy_plus_ytd_bridge"
+
+
+def test_daily_quality_snapshot_marks_reported_and_derived_leverage_sources():
+    reported = build_daily_quality_snapshot(bridge_facts(), ["2025-08-01"]).iloc[0]
+    derived = build_daily_quality_snapshot(bridge_facts(include_liabilities=False), ["2025-08-01"]).iloc[0]
+    incomplete_facts = bridge_facts(include_liabilities=False)
+    incomplete_facts = incomplete_facts.loc[incomplete_facts["field"] != "stockholders_equity"]
+    missing = build_daily_quality_snapshot(incomplete_facts, ["2025-08-01"]).iloc[0]
+
+    assert reported["debt_to_assets"] == 150.0 / 400.0
+    assert reported["debt_to_assets_source"] == "reported"
+    assert derived["debt_to_assets"] == 0.5
+    assert derived["debt_to_assets_source"] == "derived_assets_minus_equity"
+    assert pd.isna(missing["debt_to_assets"])
+    assert missing["debt_to_assets_source"] == "missing"

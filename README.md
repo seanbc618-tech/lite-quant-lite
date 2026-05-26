@@ -144,6 +144,17 @@ SEC_USER_AGENT="lite-quant-lite research contact@example.com" \
 股票，因此仍带有当前成分股的 survivorship bias；完成覆盖率验收后，才会
 接入低波动质量策略回测与 paper 压力测试。
 
+日频质量快照同时保留申报期原始比率和可审计的 TTM 质量层。年度申报直接
+提供 TTM；季度申报仅在同一申报披露了当期累计值和上年同期累计值、且此前
+完整财年已在当日可见时，使用 `FY + current YTD - prior-year YTD` 桥接。
+`ttm_source` 记录桥接来源。`debt_to_assets_source` 则区分已申报负债与
+缺失负债时使用 `(assets - equity) / assets` 的推导值。
+
+在当前 92 只股票的本地缓存验证中，最新截面有 91 只具备 `roe_ttm`、90 只
+具备 `cash_conversion_ttm`，杠杆覆盖由申报负债可得的 69 只扩展为 91 只，
+其中 22 只清楚标记为推导值。本阶段只完善数据层和覆盖报告，不直接将质量
+因子接入策略或 paper 监控。
+
 同一完整股票池的日常报告刷新会复用已经生成的
 `.cache/fundamentals/sec_facts.parquet`。解析规则变化后可从原始 SEC
 缓存重新标准化而不重新联网：

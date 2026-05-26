@@ -123,8 +123,10 @@ def test_build_fundamentals_dataset_from_cached_sec_payloads(tmp_path: Path):
     assert "SPY" not in report
     assert "current-universe survivorship bias" in report
     assert "## Daily Metric Coverage" in report
-    assert "period-normalized metrics" in report
     assert "| AAPL | 2 | 100.0% | 100.0% | 100.0% | Q1 |" in report
+    assert "## TTM Quality Coverage" in report
+    assert "Derived leverage" in report
+    assert "not promoted into a strategy workflow" in report
 
 
 def test_repeated_same_universe_build_reuses_normalized_facts_without_raw_sec_files(tmp_path: Path):

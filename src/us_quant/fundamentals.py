@@ -60,6 +60,7 @@ FIELD_TAGS: dict[str, tuple[tuple[str, str], ...]] = {
     ),
 }
 MONETARY_FIELDS = frozenset(FIELD_TAGS) - {"shares_outstanding"}
+DURATION_FIELDS = ("revenue", "net_income", "operating_cash_flow")
 
 
 def _normalize_symbol(symbol: str) -> str:
@@ -174,6 +175,104 @@ def _safe_ratio(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
     return result.replace([np.inf, -np.inf], np.nan)
 
 
+def _add_ttm_measurements(filing: pd.DataFrame, frame: pd.DataFrame) -> pd.DataFrame:
+    duration = frame.loc[
+        frame["field"].isin(DURATION_FIELDS) & frame["period_start"].notna()
+    ].copy()
+    duration = (
+        duration.sort_values(
+            [
+                "ticker",
+                "field",
+                "filed_date",
+                "accession_number",
+                "fiscal_period",
+                "period_end",
+                "_period_start_sort",
+            ]
+        )
+        .drop_duplicates(
+            [
+                "ticker",
+                "field",
+                "filed_date",
+                "accession_number",
+                "fiscal_period",
+                "period_end",
+            ],
+            keep="first",
+        )
+    )
+    same_filing: dict[tuple[Any, ...], list[tuple[pd.Timestamp, float]]] = {}
+    fiscal_years: dict[tuple[str, str], list[tuple[pd.Timestamp, pd.Timestamp, float]]] = {}
+    for record in duration.itertuples(index=False):
+        filing_key = (
+            record.ticker,
+            record.field,
+            record.filed_date,
+            record.accession_number,
+            record.fiscal_period,
+        )
+        same_filing.setdefault(filing_key, []).append((record.period_end, record.value))
+        if record.fiscal_period == "FY":
+            fiscal_years.setdefault((record.ticker, record.field), []).append(
+                (record.period_end, record.filed_date, record.value)
+            )
+    results: list[dict[str, Any]] = []
+    for _, row in filing.iterrows():
+        period = row["fiscal_period"]
+        values: dict[str, float] = {}
+        if period == "FY":
+            values = {field: row[field] for field in DURATION_FIELDS}
+            has_ttm_value = any(pd.notna(values[field]) for field in DURATION_FIELDS)
+            source = "reported_fy" if has_ttm_value else "missing"
+        elif period in {"Q1", "Q2", "Q3"}:
+            for field in DURATION_FIELDS:
+                if pd.isna(row[field]):
+                    values[field] = np.nan
+                    continue
+                prior_ytd_candidates = [
+                    item
+                    for item in same_filing.get(
+                        (
+                            row["ticker"],
+                            field,
+                            row["filed_date"],
+                            row["accession_number"],
+                            period,
+                        ),
+                        [],
+                    )
+                    if item[0] < row["period_end"]
+                ]
+                prior_fy_candidates = [
+                    item
+                    for item in fiscal_years.get((row["ticker"], field), [])
+                    if item[0] < row["period_end"] and item[1] <= row["filed_date"]
+                ]
+                if not prior_ytd_candidates or not prior_fy_candidates:
+                    values[field] = np.nan
+                else:
+                    prior_ytd_value = max(prior_ytd_candidates, key=lambda item: item[0])[1]
+                    prior_fy_value = max(prior_fy_candidates, key=lambda item: (item[0], item[1]))[2]
+                    values[field] = float(prior_fy_value + row[field] - prior_ytd_value)
+            has_ttm_value = any(pd.notna(values.get(field)) for field in DURATION_FIELDS)
+            source = "fy_plus_ytd_bridge" if has_ttm_value else "missing"
+        else:
+            values = {field: np.nan for field in DURATION_FIELDS}
+            source = "missing"
+        results.append(
+            {
+                "revenue_ttm": values["revenue"],
+                "net_income_ttm": values["net_income"],
+                "operating_cash_flow_ttm": values["operating_cash_flow"],
+                "ttm_source": source,
+            }
+        )
+    ttm = pd.DataFrame(results, index=filing.index)
+    return pd.concat([filing, ttm], axis=1)
+
+
 def build_daily_quality_snapshot(facts: pd.DataFrame, sessions: Iterable[str | pd.Timestamp]) -> pd.DataFrame:
     """Build daily filing-visible ratio snapshots without future-data leakage."""
     columns = [
@@ -188,6 +287,13 @@ def build_daily_quality_snapshot(facts: pd.DataFrame, sessions: Iterable[str | p
         "roe",
         "cash_conversion",
         "debt_to_assets",
+        "revenue_ttm",
+        "net_income_ttm",
+        "operating_cash_flow_ttm",
+        "roe_ttm",
+        "cash_conversion_ttm",
+        "ttm_source",
+        "debt_to_assets_source",
         "available_fields",
     ]
     if facts.empty:
@@ -217,7 +323,25 @@ def build_daily_quality_snapshot(facts: pd.DataFrame, sessions: Iterable[str | p
             filing[field] = np.nan
     filing["roe"] = _safe_ratio(filing["net_income"], filing["stockholders_equity"])
     filing["cash_conversion"] = _safe_ratio(filing["operating_cash_flow"], filing["net_income"])
-    filing["debt_to_assets"] = _safe_ratio(filing["total_liabilities"], filing["total_assets"])
+    reported_leverage = filing["total_liabilities"].notna() & filing["total_assets"].notna()
+    derived_leverage = (
+        ~reported_leverage
+        & filing["total_assets"].notna()
+        & filing["stockholders_equity"].notna()
+    )
+    filing["debt_to_assets"] = np.nan
+    filing.loc[reported_leverage, "debt_to_assets"] = _safe_ratio(
+        filing.loc[reported_leverage, "total_liabilities"],
+        filing.loc[reported_leverage, "total_assets"],
+    )
+    filing.loc[derived_leverage, "debt_to_assets"] = _safe_ratio(
+        filing.loc[derived_leverage, "total_assets"]
+        - filing.loc[derived_leverage, "stockholders_equity"],
+        filing.loc[derived_leverage, "total_assets"],
+    )
+    filing["debt_to_assets_source"] = "missing"
+    filing.loc[reported_leverage, "debt_to_assets_source"] = "reported"
+    filing.loc[derived_leverage, "debt_to_assets_source"] = "derived_assets_minus_equity"
     filing["available_fields"] = filing.notna().loc[:, list(FIELD_TAGS)].sum(axis=1)
     filing["_available_metrics"] = filing[["roe", "cash_conversion", "debt_to_assets"]].notna().sum(axis=1)
     filing = (
@@ -227,6 +351,11 @@ def build_daily_quality_snapshot(facts: pd.DataFrame, sessions: Iterable[str | p
         .groupby(["ticker", "filed_date", "accession_number"], dropna=False, as_index=False)
         .tail(1)
         .sort_values(["ticker", "filed_date", "period_end", "accession_number"])
+    )
+    filing = _add_ttm_measurements(filing, frame)
+    filing["roe_ttm"] = _safe_ratio(filing["net_income_ttm"], filing["stockholders_equity"])
+    filing["cash_conversion_ttm"] = _safe_ratio(
+        filing["operating_cash_flow_ttm"], filing["net_income_ttm"]
     )
 
     session_frame = pd.DataFrame({"session": sorted(pd.to_datetime(list(sessions)))})
