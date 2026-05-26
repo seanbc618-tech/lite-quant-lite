@@ -237,8 +237,15 @@ real quality run: completed; Promotion gate: PASS
 runtime advisory: Qlib dependency reports its legacy Gym package
 ```
 
-- [ ] **Step 3: Commit and push the research result**
+- [x] **Step 3: Commit and push the research result**
 
 Commit implementation, tests, command/documentation, and this validation
 record; leave `.cache/` results ignored. Push the verified commits on `main`
 to `origin/main`.
+
+Published to `origin/main`:
+
+```text
+0e57d9f docs: design independent quality satellite candidate
+77cdc0c feat: add independent quality satellite candidate
+```
