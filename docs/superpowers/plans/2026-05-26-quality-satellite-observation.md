@@ -310,9 +310,16 @@ git diff --check: passed
 The completion review found no actionable isolation or fail-closed defect in
 the new report status, preview exporter, Make targets, or documentation.
 
-- [ ] **Step 4: Commit and push the verified implementation**
+- [x] **Step 4: Commit and push the verified implementation**
 
 Stage only implementation, tests, README, specification clarification, and
 this execution record; generated `.cache` artifacts remain ignored. Commit
 and push to `origin/main`, then mark this publication step complete with the
 actual commit identifiers.
+
+Published to `origin/main`:
+
+```text
+4e6c185 docs: design quality satellite observation loop
+398ff78 feat: add isolated quality satellite paper monitoring
+```
