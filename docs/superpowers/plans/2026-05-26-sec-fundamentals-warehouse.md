@@ -171,7 +171,7 @@ Do not invent a contact identity for SEC. Ask the operator for the compliant
 `SEC_USER_AGENT` value needed for the three-symbol live smoke fetch and later
 full-universe cache build.
 
-- [ ] **Step 4: Commit the reviewed implementation**
+- [x] **Step 4: Commit the reviewed implementation**
 
 Commit code, tests, docs, and command wiring only. Leave `.cache/` products
 untracked.
@@ -227,3 +227,5 @@ untracked.
   periods and add an audited leverage fallback: `90` symbols reach at least
   `90%` ROE coverage and `88` reach that cash-conversion coverage, while only
   `67` reach that direct debt-to-assets coverage.
+- Implementation committed locally as `9a548f6 feat: add SEC fundamentals
+  warehouse`.
