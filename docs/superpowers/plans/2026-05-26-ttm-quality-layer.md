@@ -172,11 +172,11 @@ compileall passed
 git diff --check passed
 ```
 
-- [ ] **Step 2: Commit code and validation evidence**
+- [x] **Step 2: Commit code and validation evidence**
 
 Commit only tracked code/tests/docs changes; `.cache/` remains ignored.
 
-- [ ] **Step 3: Push the verified commits**
+- [x] **Step 3: Push the verified commits**
 
 Push `main` to `origin/main` after confirming the worktree has no untracked
 non-cache artifacts.
