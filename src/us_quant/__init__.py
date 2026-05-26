@@ -11,6 +11,12 @@ from us_quant.data import (
     YahooDataProvider,
     get_data_manager,
 )
+from us_quant.fundamentals import (
+    build_cik_mapping,
+    build_daily_quality_snapshot,
+    extract_canonical_facts,
+    read_investable_symbols,
+)
 from us_quant.logger import get_logger, init_logging_from_config, logger
 from us_quant.paths import PROJECT_ROOT, default_qlib_us_uri
 from us_quant.utils import (
@@ -48,6 +54,11 @@ __all__ = [
     "CacheManager",
     "DataRequest",
     "get_data_manager",
+    # 基本面
+    "build_cik_mapping",
+    "build_daily_quality_snapshot",
+    "extract_canonical_facts",
+    "read_investable_symbols",
     # 路径
     "PROJECT_ROOT",
     "default_qlib_us_uri",

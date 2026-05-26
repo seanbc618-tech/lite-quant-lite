@@ -9,7 +9,7 @@ MODERN_MARKET := liquid100
 CSV_SOURCE := $(HOME)/.qlib/stock_data/source/us_data
 PAPER_PREVIEW_BUDGET ?= 1000
 
-.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern qrun-modern-alpha360 qrun-modern-xgb qrun-modern-low sweep-modern monitor-modern-low monitor-modern-core-satellite value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2 paper-dry-modern-low paper-dry-modern-core-satellite
+.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv fundamentals-sec verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern qrun-modern-alpha360 qrun-modern-xgb qrun-modern-low sweep-modern monitor-modern-low monitor-modern-core-satellite value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2 paper-dry-modern-low paper-dry-modern-core-satellite
 
 install:
 	$(PIP) install -r requirements.txt
@@ -31,6 +31,9 @@ modern-provider-from-csv:
 
 modern-provider-from-all-csv:
 	$(PYTHONPATH) $(PY) scripts/build_modern_qlib_provider.py --provider-uri $(MODERN_PROVIDER) --market $(MODERN_MARKET) --csv-dir $(CSV_SOURCE) --symbols-from-csv $(ARGS)
+
+fundamentals-sec:
+	$(PYTHONPATH) $(PY) scripts/build_sec_fundamentals.py --provider-uri $(MODERN_PROVIDER) --market $(MODERN_MARKET) $(ARGS)
 
 verify:
 	$(PY) scripts/verify_data_sources.py

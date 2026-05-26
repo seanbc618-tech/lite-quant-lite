@@ -26,6 +26,7 @@ python3 -m venv .venv
 | `make modern-provider-from-csv ARGS=--overwrite` | 用本机 `~/.qlib/stock_data/source/us_data/*.csv` 构建现代 provider，适合 Yahoo 限流时使用 |
 | `make modern-provider-from-all-csv ARGS=--overwrite` | 用本机 CSV 目录中全部可用标的构建现代 provider |
 | `make data-report-modern` | 检查小规模现代 provider 的日历、股票池和样本覆盖 |
+| `make fundamentals-sec ARGS="--symbols AAPL,MSFT,NVDA"` | 从 SEC 缓存/接口构建 point-in-time 基本面与质量覆盖报告 |
 | `make sweep-modern ARGS="--cost-scenarios base"` | 跑现代 liquid100 参数矩阵，默认 `topk=10/15/20`、`n_drop=1/2/3` |
 | `make qrun-modern-alpha360` | 跑现代 liquid100 的 LightGBM + Alpha360 对照 |
 | `make qrun-modern-xgb` | 跑现代 liquid100 的 XGBoost + Alpha158 对照 |
@@ -123,10 +124,42 @@ make modern-provider-from-all-csv ARGS=--overwrite
 make data-report-modern
 ```
 
+## SEC 基本面数据仓
+
+真正的质量策略需要在每个历史决策日可见的财报事实，而不是把今天的
+fundamentals 回填到过去。本项目现在以 SEC EDGAR 的 `companyfacts` 与
+`submissions` 为首期来源，按 `filed_date` 构建 point-in-time 快照。
+
+第一次联网小范围验证需要设置包含联系邮箱的 SEC `User-Agent`：
+
+```bash
+SEC_USER_AGENT="lite-quant-lite research contact@example.com" \
+  make fundamentals-sec ARGS="--symbols AAPL,MSFT,NVDA"
+```
+
+原始响应缓存到 `.cache/sec/raw/`，标准化事实和日频质量快照写入
+`.cache/fundamentals/`，覆盖率报告写入
+`.cache/reports/fundamentals_quality_latest.md`。这些本地数据产物均不提交
+到 Git。首期股票池使用当前 modern `liquid100` 中除 benchmark ETF 外的
+股票，因此仍带有当前成分股的 survivorship bias；完成覆盖率验收后，才会
+接入低波动质量策略回测与 paper 压力测试。
+
+同一完整股票池的日常报告刷新会复用已经生成的
+`.cache/fundamentals/sec_facts.parquet`。解析规则变化后可从原始 SEC
+缓存重新标准化而不重新联网：
+
+```bash
+make fundamentals-sec ARGS="--rebuild-facts"
+```
+
+需要向 SEC 刷新原始申报数据时，再设置 `SEC_USER_AGENT` 并使用
+`ARGS="--refresh"`。
+
 ## 其他脚本
 
 - `scripts/alpaca_paper_executor.py`：读取 `signals/*.json` 下纸面单（需环境变量中的 Alpaca Paper Key）
 - `scripts/trade_v2.py`：新版纸面执行入口，支持 dry-run、kill-switch 和统一配置
+- `scripts/build_sec_fundamentals.py`：缓存 SEC filings facts，生成 point-in-time 质量研究数据
 - `make smoke` / `make health` / `make test`：维护检查（见 Makefile）
 
 ## 目录结构（摘要）
