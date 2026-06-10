@@ -141,6 +141,10 @@ def build_preview_payload(
     }
     if allocation is not None:
         payload["allocation"] = allocation
+    if current_positions is not None:
+        payload["current_positions"] = {
+            symbol: float(value) for symbol, value in current_positions.items()
+        }
     return payload
 
 

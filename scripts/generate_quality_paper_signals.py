@@ -100,7 +100,7 @@ def build_preview_payload(
             budget,
             min_trade_notional=min_trade_notional,
         )
-    return {
+    payload: dict[str, Any] = {
         "version": 1,
         "dry_run_only": True,
         "date": latest_session.date().isoformat(),
@@ -115,6 +115,11 @@ def build_preview_payload(
         "holding_count": len(target_weights),
         "orders": orders,
     }
+    if current_positions is not None:
+        payload["current_positions"] = {
+            symbol: float(value) for symbol, value in current_positions.items()
+        }
+    return payload
 
 
 def parse_args() -> argparse.Namespace:
