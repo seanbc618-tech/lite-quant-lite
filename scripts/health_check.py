@@ -12,6 +12,7 @@ import importlib
 import json
 import sys
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Literal
 
@@ -58,6 +59,50 @@ def check_qlib_dir(us_data: Path) -> CheckResult:
         return CheckResult("qlib_dir", "FAIL", f"missing subdirectories: {', '.join(missing)}")
 
     return CheckResult("qlib_dir", "PASS", str(us_data))
+
+
+def read_calendar_latest(provider_uri: Path) -> str | None:
+    calendar_dir = provider_uri.expanduser().resolve() / "calendars"
+    latest = None
+    for calendar_file in sorted(calendar_dir.glob("*.txt")):
+        try:
+            lines = [
+                line.strip()
+                for line in calendar_file.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+        except OSError:
+            continue
+        if lines:
+            candidate = lines[-1]
+            latest = max(latest, candidate) if latest else candidate
+    return latest
+
+
+def check_provider_freshness(
+    provider_uri: Path,
+    label: str,
+    *,
+    warn_days: int = 4,
+    fail_days: int = 7,
+    today: date | None = None,
+) -> CheckResult:
+    provider_uri = provider_uri.expanduser().resolve()
+    if not provider_uri.is_dir():
+        return CheckResult(label, "WARN", f"missing provider directory: {provider_uri}")
+
+    latest = read_calendar_latest(provider_uri)
+    if not latest:
+        return CheckResult(label, "WARN", f"calendar is empty under {provider_uri}")
+
+    today_date = today or date.today()
+    lag_days = (today_date - date.fromisoformat(latest)).days
+    message = f"latest session {latest} is {lag_days} day(s) behind {today_date.isoformat()}"
+    if lag_days > fail_days:
+        return CheckResult(label, "FAIL", message)
+    if lag_days > warn_days:
+        return CheckResult(label, "WARN", message)
+    return CheckResult(label, "PASS", message)
 
 
 def check_qlib_calendar(us_data: Path) -> CheckResult:
@@ -149,6 +194,15 @@ def run_checks(args: argparse.Namespace) -> list[CheckResult]:
         check_qlib_calendar(qlib_us_dir),
         check_signal_file(args.signals),
     ]
+    if args.modern_provider_uri:
+        results.append(
+            check_provider_freshness(
+                args.modern_provider_uri,
+                "modern_freshness",
+                warn_days=args.warn_stale_days,
+                fail_days=args.max_stale_days,
+            )
+        )
     if args.check_yahoo:
         results.append(check_yahoo(args.yahoo_symbol))
     return results
@@ -168,9 +222,34 @@ def main() -> int:
         default=Path("signals/example_signals.json"),
         help="示例信号文件",
     )
+    parser.add_argument(
+        "--modern-provider-uri",
+        type=Path,
+        default=Path.home() / ".qlib" / "qlib_data" / "us_modern_liquid100",
+        help="现代 provider 目录；默认启用新鲜度检查",
+    )
+    parser.add_argument(
+        "--skip-modern-freshness",
+        action="store_true",
+        help="跳过现代 provider 新鲜度检查",
+    )
+    parser.add_argument(
+        "--warn-stale-days",
+        type=int,
+        default=4,
+        help="现代 provider 超过该天数记为 WARN",
+    )
+    parser.add_argument(
+        "--max-stale-days",
+        type=int,
+        default=7,
+        help="现代 provider 超过该天数记为 FAIL",
+    )
     parser.add_argument("--check-yahoo", action="store_true", help="额外探测 Yahoo 外部数据源")
     parser.add_argument("--yahoo-symbol", default="AAPL", help="Yahoo 探测标的")
     args = parser.parse_args()
+    if args.skip_modern_freshness:
+        args.modern_provider_uri = None
 
     results = run_checks(args)
     print_report(results)

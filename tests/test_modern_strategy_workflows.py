@@ -131,3 +131,7 @@ def test_makefile_exposes_monitor_and_guarded_paper_preview_commands():
     assert "scripts/generate_quality_paper_signals.py" in makefile
     assert ".cache/signals/quality_reported_only_candidate_preview.json" in makefile
     assert "scripts/trade_v2.py --dry-run --signals .cache/signals/quality_reported_only_candidate_preview.json" in makefile
+    assert "quality-trend-defense:" in makefile
+    assert "scripts/run_quality_trend_defense_overlay.py" in makefile
+    assert "$(DEFENSE_ARGS)" in makefile
+    assert "paper-dry-quality-trend-defense" not in makefile

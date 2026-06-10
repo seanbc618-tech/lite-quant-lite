@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from scripts.trade_v2 import process_signals
+from scripts.trade_v2 import process_signals, resolve_orders
 
 
 def test_process_signals_rejects_dry_run_only_preview_in_submit_mode(tmp_path):
@@ -57,3 +57,40 @@ def test_process_signals_rejects_too_many_target_positions_in_dry_run(tmp_path, 
     )
 
     assert process_signals(None, signal_file, dry_run=True) == 1
+
+
+def test_resolve_orders_rebalances_from_target_weights():
+    orders = resolve_orders(
+        {
+            "rebalance": True,
+            "preview_budget": 2000.0,
+            "current_positions": {"AAPL": 1000.0, "MSFT": 500.0},
+            "target_weights": {"MSFT": 0.5, "NVDA": 0.5},
+        },
+        None,
+        dry_run=True,
+    )
+
+    assert orders == [
+        {"symbol": "AAPL", "side": "sell", "notional": 1000.0},
+        {"symbol": "NVDA", "side": "buy", "notional": 1000.0},
+        {"symbol": "MSFT", "side": "buy", "notional": 500.0},
+    ]
+
+
+def test_process_signals_executes_rebalance_preview_in_dry_run(tmp_path):
+    signal_file = tmp_path / "rebalance_preview.json"
+    signal_file.write_text(
+        json.dumps(
+            {
+                "dry_run_only": True,
+                "rebalance": True,
+                "preview_budget": 1000.0,
+                "current_positions": {"AAPL": 1000.0},
+                "target_weights": {"MSFT": 1.0},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    assert process_signals(None, signal_file, dry_run=True) == 0

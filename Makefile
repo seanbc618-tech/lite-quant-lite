@@ -9,7 +9,7 @@ MODERN_MARKET := liquid100
 CSV_SOURCE := $(HOME)/.qlib/stock_data/source/us_data
 PAPER_PREVIEW_BUDGET ?= 1000
 
-.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv fundamentals-sec quality-satellite monitor-quality-satellite verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern qrun-modern-alpha360 qrun-modern-xgb qrun-modern-low sweep-modern monitor-modern-low monitor-modern-core-satellite value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2 paper-dry-modern-low paper-dry-modern-core-satellite paper-dry-quality-satellite
+.PHONY: install install-new data modern-provider update-modern-csv-nasdaq modern-provider-from-csv modern-provider-from-all-csv fundamentals-sec quality-satellite monitor-quality-satellite quality-trend-defense verify smoke health data-report data-report-modern test test-v2 test-trade vbt vbt-v2 qlib-simple qrun-ndx qrun-sp500 qrun-ndx-low qrun-alpha360 qrun-xgb qrun-alstm qrun-modern qrun-modern-alpha360 qrun-modern-xgb qrun-modern-low sweep-modern monitor-modern-low monitor-modern-core-satellite value value-json value-validate report-runs generate-signals update-data paper-dry paper-dry-v2 paper-dry-modern-low paper-dry-modern-core-satellite paper-dry-quality-satellite daily-pipeline install-launchd uninstall-launchd
 
 install:
 	$(PIP) install -r requirements.txt
@@ -42,6 +42,10 @@ monitor-quality-satellite:
 	$(MAKE) monitor-modern-low
 	$(PYTHONPATH) $(PY) scripts/run_quality_satellite_candidate.py --provider-uri $(MODERN_PROVIDER) --report .cache/reports/quality_satellite_monitor_latest.md $(ARGS)
 
+quality-trend-defense:
+	$(MAKE) monitor-quality-satellite
+	$(PYTHONPATH) $(PY) scripts/run_quality_trend_defense_overlay.py --provider-uri $(MODERN_PROVIDER) $(DEFENSE_ARGS)
+
 verify:
 	$(PY) scripts/verify_data_sources.py
 
@@ -49,7 +53,16 @@ smoke:
 	$(PY) scripts/smoke_test.py
 
 health:
-	$(PYTHONPATH) $(PY) scripts/health_check.py
+	$(PYTHONPATH) $(PY) scripts/health_check.py --modern-provider-uri $(MODERN_PROVIDER)
+
+daily-pipeline:
+	bash scripts/daily_pipeline.sh
+
+install-launchd:
+	bash scripts/install_launchd.sh install
+
+uninstall-launchd:
+	bash scripts/install_launchd.sh uninstall
 
 data-report:
 	$(PYTHONPATH) $(PY) scripts/data_report.py

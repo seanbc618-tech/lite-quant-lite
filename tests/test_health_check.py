@@ -33,6 +33,31 @@ def test_check_signal_file_rejects_missing_orders(tmp_path):
     assert "orders" in result.message
 
 
+def test_check_provider_freshness_warns_and_fails_by_lag(tmp_path):
+    provider = tmp_path / "provider"
+    calendar = provider / "calendars"
+    calendar.mkdir(parents=True)
+    (calendar / "day.txt").write_text("2026-06-01\n", encoding="utf-8")
+
+    warn = health_check.check_provider_freshness(
+        provider,
+        "modern_freshness",
+        warn_days=4,
+        fail_days=7,
+        today=health_check.date(2026, 6, 6),
+    )
+    fail = health_check.check_provider_freshness(
+        provider,
+        "modern_freshness",
+        warn_days=4,
+        fail_days=7,
+        today=health_check.date(2026, 6, 10),
+    )
+
+    assert warn.status == "WARN"
+    assert fail.status == "FAIL"
+
+
 def test_check_qlib_dir_reports_missing_subdirectories(tmp_path):
     (tmp_path / "calendars").mkdir()
     (tmp_path / "features").mkdir()

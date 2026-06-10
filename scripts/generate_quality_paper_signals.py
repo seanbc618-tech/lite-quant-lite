@@ -4,11 +4,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from us_quant.rebalance import reconcile_positions
 
 
 DEFAULT_HOLDINGS = Path(".cache/quality_satellite/latest_holdings.parquet")
@@ -37,6 +42,8 @@ def build_preview_payload(
     source_report: Path,
     budget: float,
     max_holdings: int = 9,
+    current_positions: Mapping[str, float] | None = None,
+    min_trade_notional: float = 1.0,
 ) -> dict[str, Any]:
     """Export only the latest reported_only target as dry-run observation orders."""
     if budget <= 0:
@@ -73,14 +80,26 @@ def build_preview_payload(
     selected = selected.sort_values(
         ["target_weight", "ticker"], ascending=[False, True], kind="mergesort"
     )
-    orders = [
-        {
-            "symbol": row.ticker,
-            "side": "buy",
-            "notional": round(budget * float(row.target_weight) / total_weight, 2),
-        }
+    target_weights = {
+        str(row.ticker): float(row.target_weight) / total_weight
         for row in selected.itertuples()
-    ]
+    }
+    if current_positions is None:
+        orders = [
+            {
+                "symbol": symbol,
+                "side": "buy",
+                "notional": round(budget * weight, 2),
+            }
+            for symbol, weight in sorted(target_weights.items(), key=lambda item: (-item[1], item[0]))
+        ]
+    else:
+        orders = reconcile_positions(
+            current_positions,
+            target_weights,
+            budget,
+            min_trade_notional=min_trade_notional,
+        )
     return {
         "version": 1,
         "dry_run_only": True,
@@ -91,7 +110,9 @@ def build_preview_payload(
         "source_holdings_artifact": str(source_holdings),
         "source_report": str(source_report),
         "preview_budget": budget,
-        "holding_count": len(orders),
+        "target_weights": target_weights,
+        "rebalance": current_positions is not None,
+        "holding_count": len(target_weights),
         "orders": orders,
     }
 
@@ -103,6 +124,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--budget", type=float, default=1_000.0)
     parser.add_argument("--max-holdings", type=int, default=9)
+    parser.add_argument(
+        "--current-positions",
+        type=Path,
+        help="Optional JSON map of symbol -> current market value for rebalance orders",
+    )
+    parser.add_argument("--min-trade-notional", type=float, default=1.0)
     return parser.parse_args()
 
 
@@ -111,12 +138,17 @@ def main() -> int:
     status = read_promotion_status(args.report)
     if status != "PASS":
         raise ValueError("quality monitor promotion gate must be PASS before preview export")
+    current_positions = None
+    if args.current_positions:
+        current_positions = json.loads(args.current_positions.read_text(encoding="utf-8"))
     payload = build_preview_payload(
         pd.read_parquet(args.holdings),
         args.holdings,
         args.report,
         args.budget,
         max_holdings=args.max_holdings,
+        current_positions=current_positions,
+        min_trade_notional=args.min_trade_notional,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2), encoding="utf-8")

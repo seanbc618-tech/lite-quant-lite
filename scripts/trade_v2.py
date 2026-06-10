@@ -29,6 +29,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_ex
 from us_quant import init_logging_from_config
 from us_quant.config import config
 from us_quant.logger import get_logger
+from us_quant.rebalance import reconcile_positions
 
 logger = get_logger(__name__)
 
@@ -105,6 +106,56 @@ def risk_check_account(client: TradingClient | None) -> None:
     except Exception as e:
         logger.error(f"账户检查失败: {e}")
         raise
+
+
+def fetch_current_positions(client: TradingClient) -> dict[str, float]:
+    """Return symbol -> market value for all open Alpaca positions."""
+    return {
+        position.symbol: float(position.market_value)
+        for position in client.get_all_positions()
+        if float(position.market_value) > 0
+    }
+
+
+def resolve_orders(
+    data: dict[str, Any],
+    client: TradingClient | None,
+    *,
+    dry_run: bool,
+) -> list[dict[str, Any]]:
+    """Return executable orders, optionally reconciling target weights at runtime."""
+    orders = data.get("orders")
+    if not data.get("rebalance"):
+        if not isinstance(orders, list) or not orders:
+            raise ValueError("信号文件中没有订单")
+        return orders
+
+    target_weights = data.get("target_weights")
+    if not isinstance(target_weights, dict) or not target_weights:
+        raise ValueError("rebalance 模式需要 target_weights")
+
+    budget = data.get("portfolio_value", data.get("preview_budget"))
+    if budget is None and client is not None:
+        budget = get_account_info(client)["equity"]
+    if budget is None:
+        raise ValueError("rebalance 模式需要 portfolio_value、preview_budget 或可用账户权益")
+    budget = float(budget)
+
+    current_positions = data.get("current_positions")
+    if client is not None and not current_positions:
+        current_positions = fetch_current_positions(client)
+    if not isinstance(current_positions, dict) or not current_positions:
+        if dry_run:
+            raise ValueError("dry-run rebalance 需要在信号文件中提供 current_positions")
+        raise ValueError("rebalance 模式需要 current_positions 或可用的 Alpaca 持仓")
+
+    min_trade = float(data.get("min_trade_notional", 1.0))
+    return reconcile_positions(
+        current_positions,
+        target_weights,
+        budget,
+        min_trade_notional=min_trade,
+    )
 
 
 def risk_check_order(
@@ -185,15 +236,20 @@ def process_signals(
     # 读取信号文件
     try:
         data = json.loads(signals_path.read_text(encoding="utf-8"))
-        orders = data.get("orders", [])
-        if not orders:
-            logger.warning("信号文件中没有订单")
-            return 0
         if data.get("dry_run_only") and not dry_run:
             logger.error("候选策略观察单仅允许 --dry-run，拒绝提交订单")
             return 1
+        orders = resolve_orders(data, client, dry_run=dry_run)
+        if not orders:
+            logger.warning("再平衡后没有需要执行的订单")
+            return 0
+        if data.get("rebalance"):
+            logger.info(f"再平衡生成 {len(orders)} 笔订单")
     except (json.JSONDecodeError, FileNotFoundError) as e:
         logger.error(f"读取信号文件失败: {e}")
+        return 1
+    except ValueError as e:
+        logger.error(f"信号解析失败: {e}")
         return 1
 
     # 风控检查
@@ -209,7 +265,15 @@ def process_signals(
         positions = client.get_all_positions()
         logger.info(f"当前持仓: {len(positions)} 个标的")
     elif dry_run:
-        target_symbols = {order.get("symbol", "") for order in orders if order.get("side", "").lower() == "buy"}
+        target_symbols = {
+            order.get("symbol", "")
+            for order in orders
+            if order.get("side", "").lower() == "buy"
+        } | {
+            symbol
+            for symbol, weight in (data.get("target_weights") or {}).items()
+            if float(weight) > 0
+        }
         if len(target_symbols) > config.trading.max_open_positions:
             logger.error(
                 f"目标买入标的 {len(target_symbols)} 个超过持仓限制 {config.trading.max_open_positions}；"

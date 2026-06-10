@@ -73,6 +73,29 @@ def test_read_promotion_status_requires_explicit_status(tmp_path: Path):
         read_promotion_status(missing)
 
 
+def test_build_preview_payload_rebalances_when_current_positions_are_provided():
+    holdings = pd.DataFrame(
+        [
+            reported_holding("AAPL", 0.5),
+            reported_holding("MSFT", 0.5),
+        ]
+    )
+
+    payload = build_preview_payload(
+        holdings,
+        Path("holdings.parquet"),
+        Path("monitor.md"),
+        budget=900.0,
+        current_positions={"AAPL": 450.0, "GOOG": 450.0},
+    )
+
+    assert payload["rebalance"] is True
+    assert payload["orders"] == [
+        {"symbol": "GOOG", "side": "sell", "notional": 450.0},
+        {"symbol": "MSFT", "side": "buy", "notional": 450.0},
+    ]
+
+
 def test_build_preview_payload_rejects_nonreported_leverage_and_holding_overflow():
     derived = pd.DataFrame(
         [reported_holding("AAPL", 1.0, source="derived_assets_minus_equity")]

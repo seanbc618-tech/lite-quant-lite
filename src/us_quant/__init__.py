@@ -19,6 +19,7 @@ from us_quant.fundamentals import (
 )
 from us_quant.logger import get_logger, init_logging_from_config, logger
 from us_quant.paths import PROJECT_ROOT, default_qlib_us_uri
+from us_quant.rebalance import reconcile_positions
 from us_quant.utils import (
     BacktestUtils,
     PerformanceMetrics,
@@ -62,6 +63,7 @@ __all__ = [
     # 路径
     "PROJECT_ROOT",
     "default_qlib_us_uri",
+    "reconcile_positions",
     # 工具
     "TechnicalIndicators",
     "BacktestUtils",

@@ -8,11 +8,13 @@ import pickle
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.summarize_mlruns import read_meta
+from us_quant.rebalance import reconcile_positions
 
 
 DEFAULT_EXPERIMENT = (
@@ -51,12 +53,37 @@ def extract_weighted_holdings(snapshot: Any) -> list[tuple[str, float]]:
     ]
 
 
+def build_target_weights(
+    holdings: list[tuple[str, float]],
+    *,
+    core_symbol: str | None = None,
+    core_weight: float = 0.0,
+) -> dict[str, float]:
+    if core_symbol is None and core_weight != 0:
+        raise ValueError("core_symbol is required when core_weight is set")
+    if core_symbol is not None and not 0 < core_weight < 1:
+        raise ValueError("core_weight must be between 0 and 1")
+    invested_weight = sum(weight for _, weight in holdings)
+    if invested_weight <= 0:
+        raise ValueError("latest portfolio has no investable holdings")
+    satellite_weight = 1 - core_weight if core_symbol else 1
+    target_weights = {
+        symbol: satellite_weight * weight / invested_weight
+        for symbol, weight in holdings
+    }
+    if core_symbol:
+        target_weights[core_symbol] = core_weight
+    return target_weights
+
+
 def build_preview_payload(
     positions: dict[Any, Any],
     source_artifact: Path,
     budget: float,
     core_symbol: str | None = None,
     core_weight: float = 0.0,
+    current_positions: Mapping[str, float] | None = None,
+    min_trade_notional: float = 1.0,
 ) -> dict[str, Any]:
     if budget <= 0:
         raise ValueError("budget must be positive")
@@ -70,20 +97,30 @@ def build_preview_payload(
     holdings = extract_weighted_holdings(positions[latest_date])
     if not holdings:
         raise ValueError("latest portfolio has no investable holdings")
-    invested_weight = sum(weight for _, weight in holdings)
-    satellite_budget = budget * (1 - core_weight if core_symbol else 1)
-    orders = [
-        {
-            "symbol": symbol,
-            "side": "buy",
-            "notional": round(satellite_budget * weight / invested_weight, 2),
-        }
-        for symbol, weight in sorted(holdings, key=lambda item: (-item[1], item[0]))
-    ]
+    target_weights = build_target_weights(
+        holdings,
+        core_symbol=core_symbol,
+        core_weight=core_weight,
+    )
+    if current_positions is None:
+        orders = [
+            {
+                "symbol": symbol,
+                "side": "buy",
+                "notional": round(budget * weight, 2),
+            }
+            for symbol, weight in sorted(target_weights.items(), key=lambda item: (-item[1], item[0]))
+        ]
+    else:
+        orders = reconcile_positions(
+            current_positions,
+            target_weights,
+            budget,
+            min_trade_notional=min_trade_notional,
+        )
     strategy = "modern_low_turnover_candidate"
     allocation: dict[str, Any] | None = None
     if core_symbol:
-        orders.insert(0, {"symbol": core_symbol, "side": "buy", "notional": round(budget * core_weight, 2)})
         strategy = "modern_low_qqq_core_satellite_candidate"
         allocation = {
             "core_symbol": core_symbol,
@@ -98,6 +135,8 @@ def build_preview_payload(
         "strategy": strategy,
         "source_artifact": str(source_artifact),
         "preview_budget": budget,
+        "target_weights": target_weights,
+        "rebalance": current_positions is not None,
         "orders": orders,
     }
     if allocation is not None:
@@ -114,6 +153,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--budget", type=float, default=10_000.0)
     parser.add_argument("--core-symbol")
     parser.add_argument("--core-weight", type=float, default=0.0)
+    parser.add_argument(
+        "--current-positions",
+        type=Path,
+        help="Optional JSON map of symbol -> current market value for rebalance orders",
+    )
+    parser.add_argument("--min-trade-notional", type=float, default=1.0)
     return parser.parse_args()
 
 
@@ -122,12 +167,17 @@ def main() -> int:
     artifact = args.positions_artifact or find_latest_positions_artifact(args.mlruns, args.experiment_name)
     with artifact.open("rb") as handle:
         positions = pickle.load(handle)
+    current_positions = None
+    if args.current_positions:
+        current_positions = json.loads(args.current_positions.read_text(encoding="utf-8"))
     payload = build_preview_payload(
         positions,
         artifact,
         args.budget,
         core_symbol=args.core_symbol,
         core_weight=args.core_weight,
+        current_positions=current_positions,
+        min_trade_notional=args.min_trade_notional,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2), encoding="utf-8")

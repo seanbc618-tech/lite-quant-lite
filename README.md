@@ -29,12 +29,15 @@ python3 -m venv .venv
 | `make fundamentals-sec ARGS="--symbols AAPL,MSFT,NVDA"` | 从 SEC 缓存/接口构建 point-in-time 基本面与质量覆盖报告 |
 | `make quality-satellite` | 用 TTM 质量层运行独立月度九仓卫星研究报告（不进入 paper） |
 | `make monitor-quality-satellite` | 刷新 LightGBM 同期基线并运行质量候选双 benchmark 压力报告 |
+| `make quality-trend-defense` | 为 `reported_only` 运行 SPY/QQQ 长期趋势现金防守研究，并输出 LightGBM 只读对照 |
 | `make sweep-modern ARGS="--cost-scenarios base"` | 跑现代 liquid100 参数矩阵，默认 `topk=10/15/20`、`n_drop=1/2/3` |
 | `make qrun-modern-alpha360` | 跑现代 liquid100 的 LightGBM + Alpha360 对照 |
 | `make qrun-modern-xgb` | 跑现代 liquid100 的 XGBoost + Alpha158 对照 |
 | `make qrun-modern-low` | 跑现代 liquid100 的低换手候选（Alpha158，`topk=15/n_drop=1/hold_thresh=3`） |
 | `make monitor-modern-low` | 按最新可评估交易日运行低换手候选的 `SPY/QQQ` 滚动压力报告 |
 | `make test` | 运行项目维护测试 |
+| `make daily-pipeline` | 刷新 modern CSV/provider 并执行带新鲜度告警的健康检查 |
+| `make install-launchd` | 安装工作日 18:30 自动跑 `daily-pipeline` 的 launchd 任务 |
 | `make paper-dry-v2` | 新版交易执行层 dry-run，不触发真实下单 |
 | `make paper-dry-modern-low` | 刷新低换手候选最新组合并仅做受保护的 dry-run 观察 |
 | `make paper-dry-quality-satellite` | 仅将 `reported_only` 质量候选导出为受保护的 dry-run 观察单 |
@@ -187,6 +190,19 @@ SEC 数据。需要纳入新申报时，应先显式运行 `make fundamentals-se
 更改 LightGBM 候选输出，也不能用于下单。完整的策略解释与停止观察条件见
 `docs/superpowers/specs/2026-05-26-quality-satellite-observation-design.md`。
 
+质量候选的防守层研究入口为 `make quality-trend-defense`。它使用前一已
+完成交易日的 `SPY` 与 `QQQ` 相对 200 日均线状态，将
+`reported_only` 风险暴露映射为 `100% / 50% / 0%`，其余资金按现金
+处理；输出写入 `.cache/reports/quality_trend_defense_latest.md` 和
+`.cache/quality_trend_defense/daily_states.parquet`。该命令也报告同一
+防守规则对 LightGBM 历史收益的研究对照，但不会创建新的 paper 预览，
+也不会覆盖已有质量观察单。
+
+为检查硬现金防守是否过度压低相对收益，可显式运行温和研究 profile：
+`make quality-trend-defense DEFENSE_ARGS="--profile gentle --report .cache/reports/quality_trend_defense_gentle_latest.md --states-output .cache/quality_trend_defense/gentle_daily_states.parquet"`。
+该 profile 将可计算的正常市场状态映射为 `100% / 75% / 50%`，但缺失
+趋势信号时仍失败关闭为 `0%` 暴露；温和版报告同样不生成 paper 输出。
+
 同一完整股票池的日常报告刷新会复用已经生成的
 `.cache/fundamentals/sec_facts.parquet`。解析规则变化后可从原始 SEC
 缓存重新标准化而不重新联网：
@@ -201,7 +217,7 @@ make fundamentals-sec ARGS="--rebuild-facts"
 ## 其他脚本
 
 - `scripts/alpaca_paper_executor.py`：读取 `signals/*.json` 下纸面单（需环境变量中的 Alpaca Paper Key）
-- `scripts/trade_v2.py`：新版纸面执行入口，支持 dry-run、kill-switch 和统一配置
+- `scripts/trade_v2.py`：新版纸面执行入口，支持 dry-run、kill-switch、再平衡（`rebalance` + `target_weights`）和统一配置
 - `scripts/build_sec_fundamentals.py`：缓存 SEC filings facts，生成 point-in-time 质量研究数据
 - `make smoke` / `make health` / `make test`：维护检查（见 Makefile）
 

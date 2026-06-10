@@ -98,6 +98,23 @@ def test_build_preview_payload_rejects_invalid_core_weight():
         )
 
 
+def test_build_preview_payload_rebalances_when_current_positions_are_provided():
+    positions = {pd.Timestamp("2026-05-22"): FakeQlibPosition()}
+
+    payload = build_preview_payload(
+        positions,
+        Path("positions.pkl"),
+        budget=3000.0,
+        current_positions={"AAPL": 2000.0, "MSFT": 500.0, "GOOG": 500.0},
+    )
+
+    assert payload["rebalance"] is True
+    assert payload["orders"] == [
+        {"symbol": "GOOG", "side": "sell", "notional": 500.0},
+        {"symbol": "MSFT", "side": "buy", "notional": 500.0},
+    ]
+
+
 def test_find_latest_positions_artifact_selects_newest_finished_matching_experiment(tmp_path):
     mlruns = tmp_path / "mlruns"
     experiment = mlruns / "1"
