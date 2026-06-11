@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from argparse import Namespace
 from pathlib import Path
 
 import scripts.health_check as health_check
@@ -66,3 +67,23 @@ def test_check_qlib_dir_reports_missing_subdirectories(tmp_path):
 
     assert result.status == "FAIL"
     assert "instruments" in result.message
+
+
+def test_ci_mode_skips_local_data_and_modern_provider_checks(tmp_path):
+    args = Namespace(
+        qlib_us_dir=tmp_path / "missing-qlib",
+        signals=tmp_path / "missing-signals.json",
+        modern_provider_uri=tmp_path / "missing-modern",
+        warn_stale_days=4,
+        max_stale_days=7,
+        check_yahoo=False,
+        yahoo_symbol="AAPL",
+        ci=True,
+        skip_local_data=False,
+        skip_modern_freshness=False,
+    )
+
+    results = health_check.run_checks(args)
+
+    assert [result.name for result in results] == ["imports"]
+    assert health_check.exit_code(results) == 0

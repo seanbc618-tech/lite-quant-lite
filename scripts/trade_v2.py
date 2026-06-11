@@ -141,9 +141,10 @@ def resolve_orders(
         raise ValueError("rebalance 模式需要 portfolio_value、preview_budget 或可用账户权益")
     budget = float(budget)
 
-    current_positions = data.get("current_positions")
-    if client is not None and not current_positions:
+    if client is not None and not dry_run:
         current_positions = fetch_current_positions(client)
+    else:
+        current_positions = data.get("current_positions")
     if not isinstance(current_positions, dict) or not current_positions:
         if dry_run:
             raise ValueError("dry-run rebalance 需要在信号文件中提供 current_positions")

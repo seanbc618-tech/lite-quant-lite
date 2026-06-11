@@ -187,14 +187,20 @@ def print_report(results: list[CheckResult]) -> None:
 
 
 def run_checks(args: argparse.Namespace) -> list[CheckResult]:
-    qlib_us_dir = args.qlib_us_dir.expanduser()
-    results = [
-        check_import_versions(),
-        check_qlib_dir(qlib_us_dir),
-        check_qlib_calendar(qlib_us_dir),
-        check_signal_file(args.signals),
-    ]
-    if args.modern_provider_uri:
+    results = [check_import_versions()]
+
+    skip_local_data = args.ci or args.skip_local_data
+    if not skip_local_data:
+        qlib_us_dir = args.qlib_us_dir.expanduser()
+        results.extend(
+            [
+                check_qlib_dir(qlib_us_dir),
+                check_qlib_calendar(qlib_us_dir),
+                check_signal_file(args.signals),
+            ]
+        )
+
+    if not args.ci and args.modern_provider_uri and not args.skip_modern_freshness:
         results.append(
             check_provider_freshness(
                 args.modern_provider_uri,
@@ -234,6 +240,16 @@ def main() -> int:
         help="跳过现代 provider 新鲜度检查",
     )
     parser.add_argument(
+        "--skip-local-data",
+        action="store_true",
+        help="跳过本机 Qlib 目录和示例信号文件检查",
+    )
+    parser.add_argument(
+        "--ci",
+        action="store_true",
+        help="CI 模式：只运行不依赖本机数据目录的可移植检查",
+    )
+    parser.add_argument(
         "--warn-stale-days",
         type=int,
         default=4,
@@ -248,8 +264,6 @@ def main() -> int:
     parser.add_argument("--check-yahoo", action="store_true", help="额外探测 Yahoo 外部数据源")
     parser.add_argument("--yahoo-symbol", default="AAPL", help="Yahoo 探测标的")
     args = parser.parse_args()
-    if args.skip_modern_freshness:
-        args.modern_provider_uri = None
 
     results = run_checks(args)
     print_report(results)

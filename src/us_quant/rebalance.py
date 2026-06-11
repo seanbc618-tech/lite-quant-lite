@@ -47,7 +47,7 @@ def reconcile_positions(
         raise ValueError("target_weights must sum to at most 1")
 
     target_notionals = {
-        symbol: budget * weight / total_weight
+        symbol: budget * weight
         for symbol, weight in normalized_targets.items()
     }
     symbols = sorted(set(normalized_current) | set(target_notionals))

@@ -43,6 +43,16 @@ def test_reconcile_positions_ignores_dust_below_threshold():
     assert orders == []
 
 
+def test_reconcile_positions_preserves_cash_when_target_weights_sum_below_one():
+    orders = reconcile_positions(
+        current={},
+        target_weights={"AAPL": 0.5},
+        budget=1000.0,
+    )
+
+    assert orders == [{"symbol": "AAPL", "side": "buy", "notional": 500.0}]
+
+
 def test_reconcile_positions_rejects_invalid_weights():
     with pytest.raises(ValueError, match="at most 1"):
         reconcile_positions({"AAPL": 100.0}, {"AAPL": 0.6, "MSFT": 0.5}, 1000.0)

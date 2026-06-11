@@ -31,4 +31,4 @@ jobs:
         run: python -m pytest -q
 
       - name: Health check (CI mode)
-        run: PYTHONPATH=src python scripts/health_check.py --skip-modern-freshness
+        run: PYTHONPATH=src python scripts/health_check.py --ci

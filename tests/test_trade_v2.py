@@ -5,6 +5,17 @@ import json
 from scripts.trade_v2 import process_signals, resolve_orders
 
 
+class FakePosition:
+    def __init__(self, symbol, market_value):
+        self.symbol = symbol
+        self.market_value = market_value
+
+
+class FakeClient:
+    def get_all_positions(self):
+        return [FakePosition("AAPL", "1000")]
+
+
 def test_process_signals_rejects_dry_run_only_preview_in_submit_mode(tmp_path):
     signal_file = tmp_path / "candidate_preview.json"
     signal_file.write_text(
@@ -75,6 +86,24 @@ def test_resolve_orders_rebalances_from_target_weights():
         {"symbol": "AAPL", "side": "sell", "notional": 1000.0},
         {"symbol": "NVDA", "side": "buy", "notional": 1000.0},
         {"symbol": "MSFT", "side": "buy", "notional": 500.0},
+    ]
+
+
+def test_resolve_orders_fetches_live_positions_when_not_dry_run():
+    orders = resolve_orders(
+        {
+            "rebalance": True,
+            "preview_budget": 1000.0,
+            "current_positions": {"AAPL": 0.0},
+            "target_weights": {"MSFT": 1.0},
+        },
+        FakeClient(),
+        dry_run=False,
+    )
+
+    assert orders == [
+        {"symbol": "AAPL", "side": "sell", "notional": 1000.0},
+        {"symbol": "MSFT", "side": "buy", "notional": 1000.0},
     ]
 
 
