@@ -118,11 +118,24 @@ def _select_monetary_unit(all_facts: dict[str, Any]) -> str | None:
     return sorted(units)[0]
 
 
-def extract_canonical_facts(ticker: str, cik: str, companyfacts: dict[str, Any]) -> pd.DataFrame:
-    """Normalize selected SEC facts and expose the tag used for each observation."""
+def extract_canonical_facts(
+    ticker: str, cik: str, companyfacts: dict[str, Any], *, monetary_unit: str | None = None
+) -> pd.DataFrame:
+    """Normalize SEC facts in one currency, retaining tag and filing provenance.
+
+    An explicit, source-verified reporting currency avoids discarding comparative
+    periods when USD is only a convenience translation. No FX conversion or
+    fallback to another currency is performed. Omission preserves legacy output.
+    """
     rows: list[dict[str, Any]] = []
     all_facts = companyfacts.get("facts", {})
-    monetary_unit = _select_monetary_unit(all_facts)
+    if monetary_unit is None:
+        monetary_unit = _select_monetary_unit(all_facts)
+    elif not any(
+        monetary_unit in all_facts.get(taxonomy, {}).get(tag, {}).get("units", {})
+        for field in MONETARY_FIELDS for taxonomy, tag in FIELD_TAGS[field]
+    ):
+        raise ValueError(f"Requested monetary unit {monetary_unit!r} is absent from canonical SEC facts")
     for field, tags in FIELD_TAGS.items():
         unit = "shares" if field == "shares_outstanding" else monetary_unit
         if unit is None:

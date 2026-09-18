@@ -1,0 +1,208 @@
+{
+  "gates": {
+    "reference": "FAIL",
+    "depth3": "FAIL",
+    "depth2": "FAIL"
+  },
+  "rows": [
+    {
+      "configuration": "reference",
+      "year": 2022,
+      "model": "price",
+      "train_rows": 2304,
+      "valid_rows": 16270,
+      "rank_ic": 0.02934827697333058,
+      "ic_sessions": 245,
+      "mse": 1.023986753299398,
+      "zero_mse": 0.9849416017532349
+    },
+    {
+      "configuration": "reference",
+      "year": 2022,
+      "model": "fusion",
+      "train_rows": 2304,
+      "valid_rows": 16270,
+      "rank_ic": 0.027569525793108965,
+      "ic_sessions": 245,
+      "mse": 1.0252402229189954,
+      "zero_mse": 0.9849416017532349
+    },
+    {
+      "configuration": "reference",
+      "year": 2023,
+      "model": "price",
+      "train_rows": 18958,
+      "valid_rows": 16754,
+      "rank_ic": -0.022948084989995315,
+      "ic_sessions": 244,
+      "mse": 1.0078217508303995,
+      "zero_mse": 0.9854363203048706
+    },
+    {
+      "configuration": "reference",
+      "year": 2023,
+      "model": "fusion",
+      "train_rows": 18958,
+      "valid_rows": 16754,
+      "rank_ic": -0.05043577606623028,
+      "ic_sessions": 244,
+      "mse": 1.018583457368483,
+      "zero_mse": 0.9854363203048706
+    },
+    {
+      "configuration": "reference",
+      "year": 2024,
+      "model": "price",
+      "train_rows": 36120,
+      "valid_rows": 16988,
+      "rank_ic": -0.020715803466872344,
+      "ic_sessions": 246,
+      "mse": 0.9947033207850348,
+      "zero_mse": 0.9855191707611084
+    },
+    {
+      "configuration": "reference",
+      "year": 2024,
+      "model": "fusion",
+      "train_rows": 36120,
+      "valid_rows": 16988,
+      "rank_ic": -0.026793517223684383,
+      "ic_sessions": 246,
+      "mse": 0.9949945241477108,
+      "zero_mse": 0.9855191707611084
+    },
+    {
+      "configuration": "depth3",
+      "year": 2022,
+      "model": "price",
+      "train_rows": 2304,
+      "valid_rows": 16270,
+      "rank_ic": 0.02538521140202942,
+      "ic_sessions": 245,
+      "mse": 1.0210029480738396,
+      "zero_mse": 0.9849416017532349
+    },
+    {
+      "configuration": "depth3",
+      "year": 2022,
+      "model": "fusion",
+      "train_rows": 2304,
+      "valid_rows": 16270,
+      "rank_ic": 0.029077923177603705,
+      "ic_sessions": 245,
+      "mse": 1.019485532101896,
+      "zero_mse": 0.9849416017532349
+    },
+    {
+      "configuration": "depth3",
+      "year": 2023,
+      "model": "price",
+      "train_rows": 18958,
+      "valid_rows": 16754,
+      "rank_ic": -0.030517379433453822,
+      "ic_sessions": 244,
+      "mse": 1.001351829924755,
+      "zero_mse": 0.9854363203048706
+    },
+    {
+      "configuration": "depth3",
+      "year": 2023,
+      "model": "fusion",
+      "train_rows": 18958,
+      "valid_rows": 16754,
+      "rank_ic": -0.053070685957097866,
+      "ic_sessions": 244,
+      "mse": 1.0090323371532102,
+      "zero_mse": 0.9854363203048706
+    },
+    {
+      "configuration": "depth3",
+      "year": 2024,
+      "model": "price",
+      "train_rows": 36120,
+      "valid_rows": 16988,
+      "rank_ic": -0.03138966302994336,
+      "ic_sessions": 246,
+      "mse": 0.9923422265266881,
+      "zero_mse": 0.9855191707611084
+    },
+    {
+      "configuration": "depth3",
+      "year": 2024,
+      "model": "fusion",
+      "train_rows": 36120,
+      "valid_rows": 16988,
+      "rank_ic": -0.014331031917245891,
+      "ic_sessions": 246,
+      "mse": 0.9896031374843393,
+      "zero_mse": 0.9855191707611084
+    },
+    {
+      "configuration": "depth2",
+      "year": 2022,
+      "model": "price",
+      "train_rows": 2304,
+      "valid_rows": 16270,
+      "rank_ic": 0.033744072636799446,
+      "ic_sessions": 245,
+      "mse": 1.0071841004760826,
+      "zero_mse": 0.9849416017532349
+    },
+    {
+      "configuration": "depth2",
+      "year": 2022,
+      "model": "fusion",
+      "train_rows": 2304,
+      "valid_rows": 16270,
+      "rank_ic": 0.024929667992407662,
+      "ic_sessions": 245,
+      "mse": 1.0094347734426439,
+      "zero_mse": 0.9849416017532349
+    },
+    {
+      "configuration": "depth2",
+      "year": 2023,
+      "model": "price",
+      "train_rows": 18958,
+      "valid_rows": 16754,
+      "rank_ic": -0.033629485086631994,
+      "ic_sessions": 244,
+      "mse": 0.9945113899317326,
+      "zero_mse": 0.9854363203048706
+    },
+    {
+      "configuration": "depth2",
+      "year": 2023,
+      "model": "fusion",
+      "train_rows": 18958,
+      "valid_rows": 16754,
+      "rank_ic": -0.04569420854298717,
+      "ic_sessions": 244,
+      "mse": 0.995490068119457,
+      "zero_mse": 0.9854363203048706
+    },
+    {
+      "configuration": "depth2",
+      "year": 2024,
+      "model": "price",
+      "train_rows": 36120,
+      "valid_rows": 16988,
+      "rank_ic": -0.04410000990561508,
+      "ic_sessions": 246,
+      "mse": 0.9881821384908359,
+      "zero_mse": 0.9855191707611084
+    },
+    {
+      "configuration": "depth2",
+      "year": 2024,
+      "model": "fusion",
+      "train_rows": 36120,
+      "valid_rows": 16988,
+      "rank_ic": -0.04194664554633127,
+      "ic_sessions": 246,
+      "mse": 0.9880833683177046,
+      "zero_mse": 0.9855191707611084
+    }
+  ],
+  "limits": "Previously inspected development years only; no fresh holdout, portfolio, execution, or automatic promotion."
+}

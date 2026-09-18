@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from us_quant.fundamentals import (
     FACT_COLUMNS,
@@ -262,6 +263,23 @@ def test_extract_canonical_facts_prefers_usd_when_dual_currency_is_reported():
     facts = extract_canonical_facts("BIDU", "0001329099", fixture)
 
     assert set(facts.loc[facts["field"] != "shares_outstanding", "unit"]) == {"USD"}
+
+
+def test_explicit_reporting_currency_keeps_comparatives_without_currency_fallback():
+    payload = foreign_us_gaap_fixture()
+    for tag in payload['facts']['us-gaap'].values():
+        current = tag['units']['EUR'][0]
+        current['start'] = '2025-01-01'
+        tag['units']['EUR'].append(dict(current, start='2024-01-01', end='2024-03-31', val=50.0))
+        tag['units']['USD'] = [dict(current, val=200.0)]
+    facts = extract_canonical_facts('ASML', '937966', payload, monetary_unit='EUR')
+    monetary = facts[facts.field != 'shares_outstanding']
+    assert set(monetary.unit) == {'EUR'}
+    assert monetary.period_end.nunique() == 2
+    assert set(monetary.value) != {200.0}
+    assert set(facts[facts.field == 'shares_outstanding'].unit) == {'shares'}
+    with pytest.raises(ValueError, match='absent'):
+        extract_canonical_facts('ASML', '937966', payload, monetary_unit='JPY')
 
 
 def test_daily_quality_snapshot_uses_only_facts_visible_by_filing_date():

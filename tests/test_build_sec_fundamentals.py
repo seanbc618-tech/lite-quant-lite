@@ -9,6 +9,7 @@ import pytest
 
 from scripts.build_sec_fundamentals import (
     build_fundamentals_dataset,
+    cached_submission_cik,
     load_or_fetch_json,
     main,
     validate_user_agent,
@@ -158,6 +159,29 @@ def test_repeated_same_universe_build_reuses_normalized_facts_without_raw_sec_fi
 
     assert summary.facts_source == "normalized parquet cache"
     assert "facts_source: normalized parquet cache" in report_path.read_text(encoding="utf-8")
+
+
+def test_missing_current_mapping_uses_cached_sec_submission_without_network(tmp_path: Path):
+    provider, raw = tmp_path / "provider", tmp_path / "raw"
+    make_provider(provider)
+    write_json(raw / "ticker_mapping.json", {"fields": ["cik", "ticker"], "data": []})
+    write_json(raw / "0000320193" / "companyfacts.json", companyfacts_fixture())
+    write_json(raw / "0000320193" / "submissions.json", {"cik": "320193", "tickers": ["AAPL"]})
+    summary = build_fundamentals_dataset(
+        provider_uri=provider, raw_dir=raw, output_dir=tmp_path / "facts", report_path=tmp_path / "report.md"
+    )
+    assert summary.covered_symbols == ["AAPL"]
+    assert summary.errors == []
+
+
+def test_cached_submission_mapping_rejects_ambiguous_or_misplaced_identity(tmp_path: Path):
+    write_json(tmp_path / "0000320193" / "submissions.json", {"cik": 320193, "tickers": ["AAPL"]})
+    write_json(tmp_path / "0000000001" / "submissions.json", {"cik": 1, "tickers": ["AAPL"]})
+    with pytest.raises(ValueError, match="Ambiguous"):
+        cached_submission_cik(tmp_path, "AAPL")
+    write_json(tmp_path / "0000000001" / "submissions.json", {"cik": 2, "tickers": ["AAPL"]})
+    with pytest.raises(ValueError, match="does not match"):
+        cached_submission_cik(tmp_path, "AAPL")
 
 
 def test_build_fails_if_uncached_live_request_has_no_sec_contact_identity(tmp_path: Path):

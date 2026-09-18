@@ -1,0 +1,80 @@
+{
+  "source_hashes_unchanged": true,
+  "frozen_train_rows": [
+    2304,
+    18739,
+    35651
+  ],
+  "frozen_validation_rows": [
+    16051,
+    16510,
+    16742
+  ],
+  "minimal_fix_effect": [
+    {
+      "year": 2022,
+      "segment": "train",
+      "before": 2304,
+      "pdd_currency_only": 2304,
+      "ea_mapping_only": 2304,
+      "after_both": 2304,
+      "gained": 0,
+      "lost": 0
+    },
+    {
+      "year": 2022,
+      "segment": "validation",
+      "before": 16051,
+      "pdd_currency_only": 16051,
+      "ea_mapping_only": 16270,
+      "after_both": 16270,
+      "gained": 219,
+      "lost": 0
+    },
+    {
+      "year": 2023,
+      "segment": "train",
+      "before": 18739,
+      "pdd_currency_only": 18739,
+      "ea_mapping_only": 18958,
+      "after_both": 18958,
+      "gained": 219,
+      "lost": 0
+    },
+    {
+      "year": 2023,
+      "segment": "validation",
+      "before": 16510,
+      "pdd_currency_only": 16510,
+      "ea_mapping_only": 16754,
+      "after_both": 16754,
+      "gained": 244,
+      "lost": 0
+    },
+    {
+      "year": 2024,
+      "segment": "train",
+      "before": 35651,
+      "pdd_currency_only": 35651,
+      "ea_mapping_only": 36120,
+      "after_both": 36120,
+      "gained": 469,
+      "lost": 0
+    },
+    {
+      "year": 2024,
+      "segment": "validation",
+      "before": 16742,
+      "pdd_currency_only": 16742,
+      "ea_mapping_only": 16988,
+      "after_both": 16988,
+      "gained": 246,
+      "lost": 0
+    }
+  ],
+  "related_tests": "25 passed",
+  "source_root": "/Volumes/\u6570\u636e\u5206\u533a/\u7f8e\u80a1\u81ea\u52a8\u5316\u4ea4\u6613",
+  "artifact_root": "/Users/xiafan/.codex/worktrees/f670/\u7f8e\u80a1\u81ea\u52a8\u5316\u4ea4\u6613/.cache/reports/fusion_coverage",
+  "no_model_training": true,
+  "no_commit_or_push": true
+}

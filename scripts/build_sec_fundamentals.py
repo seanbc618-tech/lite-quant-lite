@@ -107,6 +107,23 @@ def parse_symbols(value: str | None) -> list[str] | None:
     return sorted({symbol.strip().upper().replace(".", "-") for symbol in value.split(",") if symbol.strip()})
 
 
+def cached_submission_cik(raw_dir: Path, symbol: str) -> str | None:
+    """Resolve a missing current ticker mapping from an unambiguous SEC cache."""
+    candidates = set()
+    for path in Path(raw_dir).glob("*/submissions.json"):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        tickers = {str(t).upper().replace(".", "-") for t in payload.get("tickers", [])}
+        if symbol not in tickers:
+            continue
+        cik = str(int(payload["cik"])).zfill(10)
+        if cik != path.parent.name:
+            raise ValueError(f"SEC submissions CIK does not match cache directory: {path}")
+        candidates.add(cik)
+    if len(candidates) > 1:
+        raise ValueError(f"Ambiguous cached SEC submissions mapping for {symbol}: {sorted(candidates)}")
+    return next(iter(candidates), None)
+
+
 def render_quality_report(summary: FundamentalsBuildSummary, facts: pd.DataFrame, daily: pd.DataFrame) -> str:
     coverage_rows: list[str] = []
     metric_rows: list[str] = []
@@ -225,6 +242,8 @@ def build_fundamentals_dataset(
         frames: list[pd.DataFrame] = []
         for symbol in selected_symbols:
             cik = ticker_to_cik.get(symbol)
+            if cik is None:
+                cik = cached_submission_cik(raw_dir, symbol)
             if cik is None:
                 errors.append(f"{symbol}: missing SEC ticker-to-CIK mapping")
                 continue
