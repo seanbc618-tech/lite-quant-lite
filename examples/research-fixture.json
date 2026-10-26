@@ -1,0 +1,320 @@
+{
+  "provenance": "Authored synthetic SEC-shaped facts; no actual filings, company data or vendor calendar.",
+  "sessions": [
+    "2025-08-01",
+    "2025-08-04",
+    "2025-08-05",
+    "2025-08-06",
+    "2025-08-07",
+    "2025-08-08",
+    "2025-08-11",
+    "2025-08-12",
+    "2025-08-13",
+    "2025-08-14",
+    "2025-08-15",
+    "2025-08-18"
+  ],
+  "issuers": [
+    {
+      "ticker": "SYN_A",
+      "cik": "0000000001",
+      "companyfacts": {
+        "facts": {
+          "us-gaap": {
+            "RevenueFromContractWithCustomerExcludingAssessedTax": {
+              "units": {
+                "USD": [
+                  {
+                    "val": 400,
+                    "filed": "2025-08-04",
+                    "accn": "SYN-FY",
+                    "fp": "FY",
+                    "end": "2024-12-31",
+                    "form": "10-K",
+                    "start": "2024-01-01"
+                  },
+                  {
+                    "val": 190,
+                    "filed": "2025-08-08",
+                    "accn": "SYN-Q2",
+                    "fp": "Q2",
+                    "end": "2024-06-30",
+                    "form": "10-Q",
+                    "start": "2024-01-01"
+                  },
+                  {
+                    "val": 230,
+                    "filed": "2025-08-08",
+                    "accn": "SYN-Q2",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q",
+                    "start": "2025-01-01"
+                  },
+                  {
+                    "val": 190,
+                    "filed": "2025-08-13",
+                    "accn": "SYN-Q2-AMEND",
+                    "fp": "Q2",
+                    "end": "2024-06-30",
+                    "form": "10-Q/A",
+                    "start": "2024-01-01"
+                  },
+                  {
+                    "val": 230,
+                    "filed": "2025-08-13",
+                    "accn": "SYN-Q2-AMEND",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q/A",
+                    "start": "2025-01-01"
+                  }
+                ]
+              }
+            },
+            "NetIncomeLoss": {
+              "units": {
+                "USD": [
+                  {
+                    "val": 100,
+                    "filed": "2025-08-04",
+                    "accn": "SYN-FY",
+                    "fp": "FY",
+                    "end": "2024-12-31",
+                    "form": "10-K",
+                    "start": "2024-01-01"
+                  },
+                  {
+                    "val": 60,
+                    "filed": "2025-08-08",
+                    "accn": "SYN-Q2",
+                    "fp": "Q2",
+                    "end": "2024-06-30",
+                    "form": "10-Q",
+                    "start": "2024-01-01"
+                  },
+                  {
+                    "val": 70,
+                    "filed": "2025-08-08",
+                    "accn": "SYN-Q2",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q",
+                    "start": "2025-01-01"
+                  },
+                  {
+                    "val": 60,
+                    "filed": "2025-08-13",
+                    "accn": "SYN-Q2-AMEND",
+                    "fp": "Q2",
+                    "end": "2024-06-30",
+                    "form": "10-Q/A",
+                    "start": "2024-01-01"
+                  },
+                  {
+                    "val": 80,
+                    "filed": "2025-08-13",
+                    "accn": "SYN-Q2-AMEND",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q/A",
+                    "start": "2025-01-01"
+                  }
+                ]
+              }
+            },
+            "NetCashProvidedByUsedInOperatingActivities": {
+              "units": {
+                "USD": [
+                  {
+                    "val": 120,
+                    "filed": "2025-08-04",
+                    "accn": "SYN-FY",
+                    "fp": "FY",
+                    "end": "2024-12-31",
+                    "form": "10-K",
+                    "start": "2024-01-01"
+                  },
+                  {
+                    "val": 65,
+                    "filed": "2025-08-08",
+                    "accn": "SYN-Q2",
+                    "fp": "Q2",
+                    "end": "2024-06-30",
+                    "form": "10-Q",
+                    "start": "2024-01-01"
+                  },
+                  {
+                    "val": 80,
+                    "filed": "2025-08-08",
+                    "accn": "SYN-Q2",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q",
+                    "start": "2025-01-01"
+                  },
+                  {
+                    "val": 65,
+                    "filed": "2025-08-13",
+                    "accn": "SYN-Q2-AMEND",
+                    "fp": "Q2",
+                    "end": "2024-06-30",
+                    "form": "10-Q/A",
+                    "start": "2024-01-01"
+                  },
+                  {
+                    "val": 80,
+                    "filed": "2025-08-13",
+                    "accn": "SYN-Q2-AMEND",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q/A",
+                    "start": "2025-01-01"
+                  }
+                ]
+              }
+            },
+            "Assets": {
+              "units": {
+                "USD": [
+                  {
+                    "val": 350,
+                    "filed": "2025-08-04",
+                    "accn": "SYN-FY",
+                    "fp": "FY",
+                    "end": "2024-12-31",
+                    "form": "10-K"
+                  },
+                  {
+                    "val": 400,
+                    "filed": "2025-08-08",
+                    "accn": "SYN-Q2",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q"
+                  },
+                  {
+                    "val": 400,
+                    "filed": "2025-08-13",
+                    "accn": "SYN-Q2-AMEND",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q/A"
+                  }
+                ]
+              }
+            },
+            "Liabilities": {
+              "units": {
+                "USD": [
+                  {
+                    "val": 140,
+                    "filed": "2025-08-04",
+                    "accn": "SYN-FY",
+                    "fp": "FY",
+                    "end": "2024-12-31",
+                    "form": "10-K"
+                  },
+                  {
+                    "val": 150,
+                    "filed": "2025-08-08",
+                    "accn": "SYN-Q2",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q"
+                  },
+                  {
+                    "val": 150,
+                    "filed": "2025-08-13",
+                    "accn": "SYN-Q2-AMEND",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q/A"
+                  }
+                ]
+              }
+            },
+            "StockholdersEquity": {
+              "units": {
+                "USD": [
+                  {
+                    "val": 210,
+                    "filed": "2025-08-04",
+                    "accn": "SYN-FY",
+                    "fp": "FY",
+                    "end": "2024-12-31",
+                    "form": "10-K"
+                  },
+                  {
+                    "val": 200,
+                    "filed": "2025-08-08",
+                    "accn": "SYN-Q2",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q"
+                  },
+                  {
+                    "val": 200,
+                    "filed": "2025-08-13",
+                    "accn": "SYN-Q2-AMEND",
+                    "fp": "Q2",
+                    "end": "2025-06-30",
+                    "form": "10-Q/A"
+                  }
+                ]
+              }
+            },
+            "Revenues": {
+              "units": {
+                "USD": [
+                  {
+                    "val": 999,
+                    "filed": "2025-08-04",
+                    "accn": "SYN-FY",
+                    "fp": "FY",
+                    "end": "2024-12-31",
+                    "form": "10-K",
+                    "start": "2024-01-01"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "ticker": "SYN_GAP",
+      "cik": "0000000002",
+      "companyfacts": {
+        "facts": {
+          "us-gaap": {
+            "NetIncomeLoss": {
+              "units": {
+                "USD": [
+                  {
+                    "val": 100,
+                    "filed": "2025-08-04",
+                    "accn": "SYN-GAP-FY",
+                    "fp": "FY",
+                    "end": "2024-12-31",
+                    "start": "2024-01-01",
+                    "form": "10-K"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "gap_reason": "These fields intentionally do not exist in this authored fixture."
+    }
+  ]
+}

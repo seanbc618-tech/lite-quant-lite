@@ -1,0 +1,537 @@
+{
+  "cash_baseline_ending_equity": 1000,
+  "initial_equity": 1000,
+  "input_sha256": "19604c63ee27ae37d8f5928c6e4685d0fd4b4d677e47799929fb72d717f732cc",
+  "protocol_sha256": "320f7c51739f2affd1ac1367a55f320c7220510c773610cad1b1585efc4d7250",
+  "results": [
+    {
+      "cost": 0.0,
+      "cost_bps": 0,
+      "ending_equity": 1000.0,
+      "gaps": [],
+      "ledger": [
+        {
+          "cash": 200.0,
+          "cost": 0.0,
+          "equity_after": 1000.0,
+          "equity_before": 1000.0,
+          "observation": 0,
+          "orders": [
+            {
+              "notional": 400.0,
+              "side": "buy",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 400.0,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 200.0,
+          "cost": 0.0,
+          "equity_after": 1000.0,
+          "equity_before": 1000.0,
+          "observation": 1,
+          "orders": []
+        },
+        {
+          "cash": 200.0,
+          "cost": 0.0,
+          "equity_after": 1000.0,
+          "equity_before": 1000.0,
+          "observation": 2,
+          "orders": []
+        },
+        {
+          "cash": 200.0,
+          "cost": 0.0,
+          "equity_after": 1000.0,
+          "equity_before": 1000.0,
+          "observation": 3,
+          "orders": []
+        },
+        {
+          "cash": 200.0,
+          "cost": 0.0,
+          "equity_after": 1000.0,
+          "equity_before": 1000.0,
+          "observation": 4,
+          "orders": []
+        },
+        {
+          "cash": 200.0,
+          "cost": 0.0,
+          "equity_after": 1000.0,
+          "equity_before": 1000.0,
+          "observation": 5,
+          "orders": []
+        },
+        {
+          "cash": 200.0,
+          "cost": 0.0,
+          "equity_after": 1000.0,
+          "equity_before": 1000.0,
+          "observation": 6,
+          "orders": []
+        },
+        {
+          "cash": 1000.0,
+          "cost": 0.0,
+          "equity_after": 1000.0,
+          "equity_before": 1000.0,
+          "observation": 7,
+          "orders": [
+            {
+              "notional": 400.0,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 400.0,
+              "side": "sell",
+              "symbol": "SYN_B"
+            }
+          ]
+        }
+      ],
+      "scenario": "flat",
+      "status": "VALID_SYNTHETIC",
+      "total_return": 0.0,
+      "traded_notional": 1600.0
+    },
+    {
+      "cost": 1.6,
+      "cost_bps": 10,
+      "ending_equity": 998.4,
+      "gaps": [],
+      "ledger": [
+        {
+          "cash": 199.2,
+          "cost": 0.8,
+          "equity_after": 999.2,
+          "equity_before": 1000.0,
+          "observation": 0,
+          "orders": [
+            {
+              "notional": 400.0,
+              "side": "buy",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 400.0,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 199.2,
+          "cost": 0.0,
+          "equity_after": 999.2,
+          "equity_before": 999.2,
+          "observation": 1,
+          "orders": []
+        },
+        {
+          "cash": 199.2,
+          "cost": 0.0,
+          "equity_after": 999.2,
+          "equity_before": 999.2,
+          "observation": 2,
+          "orders": []
+        },
+        {
+          "cash": 199.2,
+          "cost": 0.0,
+          "equity_after": 999.2,
+          "equity_before": 999.2,
+          "observation": 3,
+          "orders": []
+        },
+        {
+          "cash": 199.2,
+          "cost": 0.0,
+          "equity_after": 999.2,
+          "equity_before": 999.2,
+          "observation": 4,
+          "orders": []
+        },
+        {
+          "cash": 199.2,
+          "cost": 0.0,
+          "equity_after": 999.2,
+          "equity_before": 999.2,
+          "observation": 5,
+          "orders": []
+        },
+        {
+          "cash": 199.2,
+          "cost": 0.0,
+          "equity_after": 999.2,
+          "equity_before": 999.2,
+          "observation": 6,
+          "orders": []
+        },
+        {
+          "cash": 998.4,
+          "cost": 0.8,
+          "equity_after": 998.4,
+          "equity_before": 999.2,
+          "observation": 7,
+          "orders": [
+            {
+              "notional": 400.0,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 400.0,
+              "side": "sell",
+              "symbol": "SYN_B"
+            }
+          ]
+        }
+      ],
+      "scenario": "flat",
+      "status": "VALID_SYNTHETIC",
+      "total_return": -0.0016,
+      "traded_notional": 1600.0
+    },
+    {
+      "cost": 0.0,
+      "cost_bps": 0,
+      "ending_equity": 914.70392191,
+      "gaps": [],
+      "ledger": [
+        {
+          "cash": 200.0,
+          "cost": 0.0,
+          "equity_after": 1000.0,
+          "equity_before": 1000.0,
+          "observation": 0,
+          "orders": [
+            {
+              "notional": 400.0,
+              "side": "buy",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 400.0,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 196.8,
+          "cost": 0.0,
+          "equity_after": 988.0,
+          "equity_before": 988.0,
+          "observation": 1,
+          "orders": [
+            {
+              "notional": 3.2,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 195.19,
+          "cost": 0.0,
+          "equity_after": 975.93469388,
+          "equity_before": 975.93469388,
+          "observation": 2,
+          "orders": [
+            {
+              "notional": 1.63,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 3.24,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 191.9,
+          "cost": 0.0,
+          "equity_after": 963.81852041,
+          "equity_before": 963.81852041,
+          "observation": 3,
+          "orders": [
+            {
+              "notional": 3.29,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 190.33,
+          "cost": 0.0,
+          "equity_after": 951.63234694,
+          "equity_before": 951.63234694,
+          "observation": 4,
+          "orders": [
+            {
+              "notional": 1.75,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 3.32,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 186.95,
+          "cost": 0.0,
+          "equity_after": 939.39222872,
+          "equity_before": 939.39222872,
+          "observation": 5,
+          "orders": [
+            {
+              "notional": 3.38,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 185.41,
+          "cost": 0.0,
+          "equity_after": 927.0769994,
+          "equity_before": 927.0769994,
+          "observation": 6,
+          "orders": [
+            {
+              "notional": 1.89,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 3.43,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 914.70392191,
+          "cost": 0.0,
+          "equity_after": 914.70392191,
+          "equity_before": 914.70392191,
+          "observation": 7,
+          "orders": [
+            {
+              "notional": 366.88795714828484,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 362.405964758499,
+              "side": "sell",
+              "symbol": "SYN_B"
+            }
+          ]
+        }
+      ],
+      "scenario": "falling",
+      "status": "VALID_SYNTHETIC",
+      "total_return": -0.0852960781,
+      "traded_notional": 1554.42392191
+    },
+    {
+      "cost": 1.55380211,
+      "cost_bps": 10,
+      "ending_equity": 913.20830996,
+      "gaps": [],
+      "ledger": [
+        {
+          "cash": 199.2,
+          "cost": 0.8,
+          "equity_after": 999.2,
+          "equity_before": 1000.0,
+          "observation": 0,
+          "orders": [
+            {
+              "notional": 400.0,
+              "side": "buy",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 400.0,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 197.436,
+          "cost": 0.004,
+          "equity_after": 987.196,
+          "equity_before": 987.2,
+          "observation": 1,
+          "orders": [
+            {
+              "notional": 1.12,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 2.88,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 194.19276,
+          "cost": 0.00324,
+          "equity_after": 975.14529762,
+          "equity_before": 975.14853762,
+          "observation": 2,
+          "orders": [
+            {
+              "notional": 3.24,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 192.59779,
+          "cost": 0.00497,
+          "equity_after": 963.02536524,
+          "equity_before": 963.03033524,
+          "observation": 3,
+          "orders": [
+            {
+              "notional": 1.69,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 3.28,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 189.27447,
+          "cost": 0.00332,
+          "equity_after": 950.85471831,
+          "equity_before": 950.85803831,
+          "observation": 4,
+          "orders": [
+            {
+              "notional": 3.32,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 187.70927,
+          "cost": 0.0052,
+          "equity_after": 938.61001746,
+          "equity_before": 938.61521746,
+          "observation": 5,
+          "orders": [
+            {
+              "notional": 1.82,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 3.38,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 184.28585,
+          "cost": 0.00342,
+          "equity_after": 926.3111434,
+          "equity_before": 926.3145634,
+          "observation": 6,
+          "orders": [
+            {
+              "notional": 3.42,
+              "side": "buy",
+              "symbol": "SYN_B"
+            }
+          ]
+        },
+        {
+          "cash": 913.20830996,
+          "cost": 0.72965211,
+          "equity_after": 913.20830996,
+          "equity_before": 913.93796207,
+          "observation": 7,
+          "orders": [
+            {
+              "notional": 367.54588529900195,
+              "side": "sell",
+              "symbol": "SYN_A"
+            },
+            {
+              "notional": 362.1062267685255,
+              "side": "sell",
+              "symbol": "SYN_B"
+            }
+          ]
+        }
+      ],
+      "scenario": "falling",
+      "status": "VALID_SYNTHETIC",
+      "total_return": -0.08679169,
+      "traded_notional": 1553.80211207
+    },
+    {
+      "cost": null,
+      "cost_bps": 0,
+      "ending_equity": null,
+      "gap_reason": "Intentionally absent synthetic fixture cell; no market vendor involved.",
+      "gaps": [
+        {
+          "observation": 3,
+          "symbol": "SYN_B"
+        }
+      ],
+      "ledger": [],
+      "scenario": "declared_missing",
+      "status": "INVALID_DECLARED_GAP",
+      "total_return": null,
+      "traded_notional": null
+    },
+    {
+      "cost": null,
+      "cost_bps": 10,
+      "ending_equity": null,
+      "gap_reason": "Intentionally absent synthetic fixture cell; no market vendor involved.",
+      "gaps": [
+        {
+          "observation": 3,
+          "symbol": "SYN_B"
+        }
+      ],
+      "ledger": [],
+      "scenario": "declared_missing",
+      "status": "INVALID_DECLARED_GAP",
+      "total_return": null,
+      "traded_notional": null
+    }
+  ],
+  "scope": "Synthetic engineering demonstration; no economic inference"
+}

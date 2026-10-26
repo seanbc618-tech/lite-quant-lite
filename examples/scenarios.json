@@ -1,0 +1,81 @@
+{
+  "provenance": "Authored synthetic fixtures; no external data.",
+  "scenarios": [
+    {
+      "name": "flat",
+      "prices": {
+        "SYN_A": [
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100
+        ],
+        "SYN_B": [
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100
+        ]
+      }
+    },
+    {
+      "name": "falling",
+      "prices": {
+        "SYN_A": [
+          100,
+          99,
+          98,
+          97,
+          96,
+          95,
+          94,
+          93
+        ],
+        "SYN_B": [
+          100,
+          98,
+          96,
+          94,
+          92,
+          90,
+          88,
+          86
+        ]
+      }
+    },
+    {
+      "name": "declared_missing",
+      "prices": {
+        "SYN_A": [
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100
+        ],
+        "SYN_B": [
+          100,
+          100,
+          100,
+          null,
+          100,
+          100,
+          100,
+          100
+        ]
+      },
+      "gap_reason": "Intentionally absent synthetic fixture cell; no market vendor involved."
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+# Test runner; financial-data tests also need requirements-research.txt.
+pytest==9.0.3

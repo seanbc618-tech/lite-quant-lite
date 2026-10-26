@@ -1,0 +1,94 @@
+{
+  "exact_files": [
+    {
+      "source": "src/us_quant/rebalance.py",
+      "candidate": "us_quant/rebalance.py",
+      "sha256": "2cab06727d6a0a3cdf1d2d790a3287f5d60c0246f2cacf3c33f41e76d4e0dcf2"
+    },
+    {
+      "source": "tests/test_rebalance.py",
+      "candidate": "tests/test_rebalance.py",
+      "sha256": "bfaa8bbe570ea1a64fd39f3f98b0e536c14937b2d05984e303b0b73f89f7c608"
+    },
+    {
+      "source": "src/us_quant/fundamentals.py",
+      "candidate": "us_quant/fundamentals.py",
+      "sha256": "9a06ce73fe6ea91f8e5f1eaa5aa09829fb4bed051ea927fe0ad10cb0eb0cc77f"
+    },
+    {
+      "source": "tests/test_fundamentals.py",
+      "candidate": "tests/test_fundamentals.py",
+      "sha256": "db88410d96c5b4ddb273daecf88a34ca895793454a11ac03d05b513cc7c2056d"
+    },
+    {
+      "source": "LICENSE",
+      "candidate": "LICENSE",
+      "sha256": "0c075a85af00dcb2433eb2f2075f2705a3eb88473b6c8cb2c69daf01e096657d"
+    }
+  ],
+  "selected_definitions": [
+    {
+      "source": "scripts/data_report.py",
+      "definition": "CalendarSummary",
+      "candidate": "us_quant/provider_audit.py",
+      "definition_sha256": "551eef4dd4130a87cfa899bd15d5a51546b957cade3acb54467c7ee1b03a88cd"
+    },
+    {
+      "source": "scripts/data_report.py",
+      "definition": "InstrumentSummary",
+      "candidate": "us_quant/provider_audit.py",
+      "definition_sha256": "1c5f56da6aa7f3ea7d4df4f96663f7d5a011efa87a7fab095c64a6a05b69f1a0"
+    },
+    {
+      "source": "scripts/data_report.py",
+      "definition": "parse_calendar",
+      "candidate": "us_quant/provider_audit.py",
+      "definition_sha256": "97f35f567765075515d0ad2f64a7e3ec95dfee4cd4e4bb393d5e14a5084217d7"
+    },
+    {
+      "source": "scripts/data_report.py",
+      "definition": "count_instruments",
+      "candidate": "us_quant/provider_audit.py",
+      "definition_sha256": "bd59c83dada61dc31b3e5fba121ebb35fe02430b6dc58d8db639cff87d053e4d"
+    },
+    {
+      "source": "scripts/data_report.py",
+      "definition": "read_instrument_symbols",
+      "candidate": "us_quant/provider_audit.py",
+      "definition_sha256": "1f0eddc7dd71ee8bd095947f2639adfb927995122ddab9e443f71cfb500e1284"
+    },
+    {
+      "source": "scripts/data_report.py",
+      "definition": "collect_instrument_summaries",
+      "candidate": "us_quant/provider_audit.py",
+      "definition_sha256": "0fb86594344c43b0f3650a17fd366c933a0e14788182c8d0c295d4c2e3489e70"
+    },
+    {
+      "source": "tests/test_data_report.py",
+      "definition": "write_text",
+      "candidate": "tests/test_provider_audit.py",
+      "definition_sha256": "b974a7d6056e969d554785c7ee9939348dc0a66615692e975112ce2f10f80abc"
+    },
+    {
+      "source": "tests/test_data_report.py",
+      "definition": "test_parse_calendar_reads_start_end_and_session_count",
+      "candidate": "tests/test_provider_audit.py",
+      "definition_sha256": "31b7302eca572b484055a6e1b324cb3b0c56dfba04dbf74bf17d17a3f1b38f83"
+    },
+    {
+      "source": "tests/test_data_report.py",
+      "definition": "test_collect_instrument_summaries_counts_nonempty_rows",
+      "candidate": "tests/test_provider_audit.py",
+      "definition_sha256": "e92dc6cd9a10136aea07f0a9e92c90fdc83b6f1114ad2a25acb13156ca6829a9"
+    }
+  ],
+  "adapted_logic": [
+    {
+      "source": "scripts/diagnose_alpha360_validation.py",
+      "source_state": "pre-existing uncommitted local diagnostic, not claimed as part of HEAD",
+      "source_sha256": "a66e060bcab949217d7da1210c8441b9235b18291abd6f16f5d12ec8ee3cad4f",
+      "candidate": "us_quant/validation.py",
+      "change": "Adapt calendar-index t+horizon+1 endpoint mask; replace filtering with retained statuses, add input guards; exclude models, parameters, Qlib and paths."
+    }
+  ]
+}

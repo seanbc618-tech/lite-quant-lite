@@ -1,0 +1,1193 @@
+{
+  "canonical_facts": [
+    {
+      "accession_number": "SYN-FY",
+      "cik": "0000000001",
+      "field": "net_income",
+      "filed_date": "2025-08-04T00:00:00.000",
+      "fiscal_period": "FY",
+      "form": "10-K",
+      "period_end": "2024-12-31T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "NetIncomeLoss",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 100.0
+    },
+    {
+      "accession_number": "SYN-FY",
+      "cik": "0000000001",
+      "field": "operating_cash_flow",
+      "filed_date": "2025-08-04T00:00:00.000",
+      "fiscal_period": "FY",
+      "form": "10-K",
+      "period_end": "2024-12-31T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "NetCashProvidedByUsedInOperatingActivities",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 120.0
+    },
+    {
+      "accession_number": "SYN-FY",
+      "cik": "0000000001",
+      "field": "revenue",
+      "filed_date": "2025-08-04T00:00:00.000",
+      "fiscal_period": "FY",
+      "form": "10-K",
+      "period_end": "2024-12-31T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 400.0
+    },
+    {
+      "accession_number": "SYN-FY",
+      "cik": "0000000001",
+      "field": "stockholders_equity",
+      "filed_date": "2025-08-04T00:00:00.000",
+      "fiscal_period": "FY",
+      "form": "10-K",
+      "period_end": "2024-12-31T00:00:00.000",
+      "period_start": null,
+      "tag": "StockholdersEquity",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 210.0
+    },
+    {
+      "accession_number": "SYN-FY",
+      "cik": "0000000001",
+      "field": "total_assets",
+      "filed_date": "2025-08-04T00:00:00.000",
+      "fiscal_period": "FY",
+      "form": "10-K",
+      "period_end": "2024-12-31T00:00:00.000",
+      "period_start": null,
+      "tag": "Assets",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 350.0
+    },
+    {
+      "accession_number": "SYN-FY",
+      "cik": "0000000001",
+      "field": "total_liabilities",
+      "filed_date": "2025-08-04T00:00:00.000",
+      "fiscal_period": "FY",
+      "form": "10-K",
+      "period_end": "2024-12-31T00:00:00.000",
+      "period_start": null,
+      "tag": "Liabilities",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 140.0
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "cik": "0000000001",
+      "field": "net_income",
+      "filed_date": "2025-08-08T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q",
+      "period_end": "2024-06-30T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "NetIncomeLoss",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 60.0
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "cik": "0000000001",
+      "field": "net_income",
+      "filed_date": "2025-08-08T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": "2025-01-01T00:00:00.000",
+      "tag": "NetIncomeLoss",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 70.0
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "cik": "0000000001",
+      "field": "operating_cash_flow",
+      "filed_date": "2025-08-08T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q",
+      "period_end": "2024-06-30T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "NetCashProvidedByUsedInOperatingActivities",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 65.0
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "cik": "0000000001",
+      "field": "operating_cash_flow",
+      "filed_date": "2025-08-08T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": "2025-01-01T00:00:00.000",
+      "tag": "NetCashProvidedByUsedInOperatingActivities",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 80.0
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "cik": "0000000001",
+      "field": "revenue",
+      "filed_date": "2025-08-08T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q",
+      "period_end": "2024-06-30T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 190.0
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "cik": "0000000001",
+      "field": "revenue",
+      "filed_date": "2025-08-08T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": "2025-01-01T00:00:00.000",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 230.0
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "cik": "0000000001",
+      "field": "stockholders_equity",
+      "filed_date": "2025-08-08T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": null,
+      "tag": "StockholdersEquity",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 200.0
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "cik": "0000000001",
+      "field": "total_assets",
+      "filed_date": "2025-08-08T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": null,
+      "tag": "Assets",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 400.0
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "cik": "0000000001",
+      "field": "total_liabilities",
+      "filed_date": "2025-08-08T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": null,
+      "tag": "Liabilities",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 150.0
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "cik": "0000000001",
+      "field": "net_income",
+      "filed_date": "2025-08-13T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q/A",
+      "period_end": "2024-06-30T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "NetIncomeLoss",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 60.0
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "cik": "0000000001",
+      "field": "net_income",
+      "filed_date": "2025-08-13T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q/A",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": "2025-01-01T00:00:00.000",
+      "tag": "NetIncomeLoss",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 80.0
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "cik": "0000000001",
+      "field": "operating_cash_flow",
+      "filed_date": "2025-08-13T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q/A",
+      "period_end": "2024-06-30T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "NetCashProvidedByUsedInOperatingActivities",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 65.0
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "cik": "0000000001",
+      "field": "operating_cash_flow",
+      "filed_date": "2025-08-13T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q/A",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": "2025-01-01T00:00:00.000",
+      "tag": "NetCashProvidedByUsedInOperatingActivities",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 80.0
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "cik": "0000000001",
+      "field": "revenue",
+      "filed_date": "2025-08-13T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q/A",
+      "period_end": "2024-06-30T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 190.0
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "cik": "0000000001",
+      "field": "revenue",
+      "filed_date": "2025-08-13T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q/A",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": "2025-01-01T00:00:00.000",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 230.0
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "cik": "0000000001",
+      "field": "stockholders_equity",
+      "filed_date": "2025-08-13T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q/A",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": null,
+      "tag": "StockholdersEquity",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 200.0
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "cik": "0000000001",
+      "field": "total_assets",
+      "filed_date": "2025-08-13T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q/A",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": null,
+      "tag": "Assets",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 400.0
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "cik": "0000000001",
+      "field": "total_liabilities",
+      "filed_date": "2025-08-13T00:00:00.000",
+      "fiscal_period": "Q2",
+      "form": "10-Q/A",
+      "period_end": "2025-06-30T00:00:00.000",
+      "period_start": null,
+      "tag": "Liabilities",
+      "ticker": "SYN_A",
+      "unit": "USD",
+      "value": 150.0
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "cik": "0000000002",
+      "field": "net_income",
+      "filed_date": "2025-08-04T00:00:00.000",
+      "fiscal_period": "FY",
+      "form": "10-K",
+      "period_end": "2024-12-31T00:00:00.000",
+      "period_start": "2024-01-01T00:00:00.000",
+      "tag": "NetIncomeLoss",
+      "ticker": "SYN_GAP",
+      "unit": "USD",
+      "value": 100.0
+    }
+  ],
+  "checks": {
+    "boundary_purge": true,
+    "calendar_guards": true,
+    "declared_gaps_null": true,
+    "full_grid_retained": true,
+    "missing_endpoint_guard": true,
+    "next_session_amendment_visibility": true,
+    "prefix_invariance": true,
+    "tag_precedence": true,
+    "ttm_bridge": true
+  },
+  "eligible_cells": 4,
+  "information_panel": [
+    {
+      "accession_number": null,
+      "debt_to_assets_source": null,
+      "filed_date": null,
+      "information_session": null,
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-01",
+      "status": "NOT_YET_AVAILABLE",
+      "ticker": "SYN_A",
+      "ttm_source": null
+    },
+    {
+      "accession_number": null,
+      "debt_to_assets_source": null,
+      "filed_date": null,
+      "information_session": null,
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-01",
+      "status": "NOT_YET_AVAILABLE",
+      "ticker": "SYN_GAP",
+      "ttm_source": null
+    },
+    {
+      "accession_number": null,
+      "debt_to_assets_source": null,
+      "filed_date": null,
+      "information_session": "2025-08-01",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-04",
+      "status": "NOT_YET_AVAILABLE",
+      "ticker": "SYN_A",
+      "ttm_source": null
+    },
+    {
+      "accession_number": null,
+      "debt_to_assets_source": null,
+      "filed_date": null,
+      "information_session": "2025-08-01",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-04",
+      "status": "NOT_YET_AVAILABLE",
+      "ticker": "SYN_GAP",
+      "ttm_source": null
+    },
+    {
+      "accession_number": "SYN-FY",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-04",
+      "information_session": "2025-08-04",
+      "metrics": {
+        "cash_conversion_ttm": 1.2,
+        "debt_to_assets": 0.4,
+        "net_income_ttm": 100.0,
+        "roe_ttm": 0.47619047619
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.2,
+        "debt_to_assets": 0.4,
+        "net_income_ttm": 100.0,
+        "roe_ttm": 0.47619047619
+      },
+      "signal_session": "2025-08-05",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-04",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-05",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-FY",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-04",
+      "information_session": "2025-08-05",
+      "metrics": {
+        "cash_conversion_ttm": 1.2,
+        "debt_to_assets": 0.4,
+        "net_income_ttm": 100.0,
+        "roe_ttm": 0.47619047619
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.2,
+        "debt_to_assets": 0.4,
+        "net_income_ttm": 100.0,
+        "roe_ttm": 0.47619047619
+      },
+      "signal_session": "2025-08-06",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-05",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-06",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-FY",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-04",
+      "information_session": "2025-08-06",
+      "metrics": {
+        "cash_conversion_ttm": 1.2,
+        "debt_to_assets": 0.4,
+        "net_income_ttm": 100.0,
+        "roe_ttm": 0.47619047619
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.2,
+        "debt_to_assets": 0.4,
+        "net_income_ttm": 100.0,
+        "roe_ttm": 0.47619047619
+      },
+      "signal_session": "2025-08-07",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-06",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-07",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-FY",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-04",
+      "information_session": "2025-08-07",
+      "metrics": {
+        "cash_conversion_ttm": 1.2,
+        "debt_to_assets": 0.4,
+        "net_income_ttm": 100.0,
+        "roe_ttm": 0.47619047619
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.2,
+        "debt_to_assets": 0.4,
+        "net_income_ttm": 100.0,
+        "roe_ttm": 0.47619047619
+      },
+      "signal_session": "2025-08-08",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-07",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-08",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-08",
+      "information_session": "2025-08-08",
+      "metrics": {
+        "cash_conversion_ttm": 1.227272727273,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 110.0,
+        "roe_ttm": 0.55
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.227272727273,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 110.0,
+        "roe_ttm": 0.55
+      },
+      "signal_session": "2025-08-11",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "fy_plus_ytd_bridge"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-08",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-11",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-08",
+      "information_session": "2025-08-11",
+      "metrics": {
+        "cash_conversion_ttm": 1.227272727273,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 110.0,
+        "roe_ttm": 0.55
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.227272727273,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 110.0,
+        "roe_ttm": 0.55
+      },
+      "signal_session": "2025-08-12",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "fy_plus_ytd_bridge"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-11",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-12",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-Q2",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-08",
+      "information_session": "2025-08-12",
+      "metrics": {
+        "cash_conversion_ttm": 1.227272727273,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 110.0,
+        "roe_ttm": 0.55
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.227272727273,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 110.0,
+        "roe_ttm": 0.55
+      },
+      "signal_session": "2025-08-13",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "fy_plus_ytd_bridge"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-12",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-13",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-13",
+      "information_session": "2025-08-13",
+      "metrics": {
+        "cash_conversion_ttm": 1.125,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 120.0,
+        "roe_ttm": 0.6
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.125,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 120.0,
+        "roe_ttm": 0.6
+      },
+      "signal_session": "2025-08-14",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "fy_plus_ytd_bridge"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-13",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-14",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-13",
+      "information_session": "2025-08-14",
+      "metrics": {
+        "cash_conversion_ttm": 1.125,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 120.0,
+        "roe_ttm": 0.6
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.125,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 120.0,
+        "roe_ttm": 0.6
+      },
+      "signal_session": "2025-08-15",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "fy_plus_ytd_bridge"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-14",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-15",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    },
+    {
+      "accession_number": "SYN-Q2-AMEND",
+      "debt_to_assets_source": "reported",
+      "filed_date": "2025-08-13",
+      "information_session": "2025-08-15",
+      "metrics": {
+        "cash_conversion_ttm": 1.125,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 120.0,
+        "roe_ttm": 0.6
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": 1.125,
+        "debt_to_assets": 0.375,
+        "net_income_ttm": 120.0,
+        "roe_ttm": 0.6
+      },
+      "signal_session": "2025-08-18",
+      "status": "VALID",
+      "ticker": "SYN_A",
+      "ttm_source": "fy_plus_ytd_bridge"
+    },
+    {
+      "accession_number": "SYN-GAP-FY",
+      "debt_to_assets_source": "missing",
+      "declared_missing_fields": [
+        "revenue",
+        "operating_cash_flow",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity"
+      ],
+      "filed_date": "2025-08-04",
+      "gap_reason": "These fields intentionally do not exist in this authored fixture.",
+      "information_session": "2025-08-15",
+      "metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": null,
+        "roe_ttm": null
+      },
+      "observed_metrics": {
+        "cash_conversion_ttm": null,
+        "debt_to_assets": null,
+        "net_income_ttm": 100.0,
+        "roe_ttm": null
+      },
+      "signal_session": "2025-08-18",
+      "status": "INVALID_DECLARED_GAP",
+      "ticker": "SYN_GAP",
+      "ttm_source": "reported_fy"
+    }
+  ],
+  "negative_control": {
+    "early_expected_income_ttm": 100,
+    "leak_detected": true,
+    "wrong_latest_join_income_ttm": 120.0
+  },
+  "panel_status_counts": {
+    "INVALID_DECLARED_GAP": 10,
+    "NOT_YET_AVAILABLE": 4,
+    "VALID": 10
+  },
+  "provider": {
+    "calendar_kind": "authored synthetic session list",
+    "end": "2025-08-18",
+    "sessions": 12,
+    "start": "2025-08-01",
+    "symbols": [
+      "SYN_A",
+      "SYN_GAP"
+    ]
+  },
+  "reserved_sessions_not_scored": [
+    "2025-08-15",
+    "2025-08-18"
+  ],
+  "scope": "Synthetic research engineering; no fitted model or market evidence",
+  "sha256": {
+    "RESEARCH_PROTOCOL.md": "1afb6924031809e7080efaf840ea9e6b61e4fe7819ac26eed18362c61de88005",
+    "examples/provider/calendars/day.txt": "268478312914bb5aaa61cffa1f205fa209e7c6752aa84e46a2df6f1eb6b004c1",
+    "examples/provider/instruments/synthetic.txt": "63146fa3c8030aeb854dd87a642395065fb32bebf992408fa23d878ed9581aee",
+    "examples/research-fixture.json": "cf38bfc739c0b2a8ce6a99897b354edb3c487de13f76ea004945fb16553e29c6"
+  },
+  "split_audit": [
+    {
+      "availability_status": "NOT_YET_AVAILABLE",
+      "eligible": null,
+      "label_end": "2025-08-05",
+      "session": "2025-08-01",
+      "split": "train",
+      "status": "VALID",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "NOT_YET_AVAILABLE",
+      "eligible": null,
+      "label_end": "2025-08-05",
+      "session": "2025-08-01",
+      "split": "train",
+      "status": "VALID",
+      "ticker": "SYN_GAP"
+    },
+    {
+      "availability_status": "NOT_YET_AVAILABLE",
+      "eligible": null,
+      "label_end": "2025-08-06",
+      "session": "2025-08-04",
+      "split": "train",
+      "status": "VALID",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "NOT_YET_AVAILABLE",
+      "eligible": null,
+      "label_end": "2025-08-06",
+      "session": "2025-08-04",
+      "split": "train",
+      "status": "VALID",
+      "ticker": "SYN_GAP"
+    },
+    {
+      "availability_status": "VALID",
+      "eligible": true,
+      "label_end": "2025-08-07",
+      "session": "2025-08-05",
+      "split": "train",
+      "status": "VALID",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "INVALID_DECLARED_GAP",
+      "eligible": null,
+      "label_end": "2025-08-07",
+      "session": "2025-08-05",
+      "split": "train",
+      "status": "VALID",
+      "ticker": "SYN_GAP"
+    },
+    {
+      "availability_status": "VALID",
+      "eligible": true,
+      "label_end": "2025-08-08",
+      "session": "2025-08-06",
+      "split": "train",
+      "status": "VALID",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "INVALID_DECLARED_GAP",
+      "eligible": null,
+      "label_end": "2025-08-08",
+      "session": "2025-08-06",
+      "split": "train",
+      "status": "VALID",
+      "ticker": "SYN_GAP"
+    },
+    {
+      "availability_status": "VALID",
+      "eligible": null,
+      "label_end": "2025-08-11",
+      "session": "2025-08-07",
+      "split": "train",
+      "status": "INVALID_BOUNDARY",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "INVALID_DECLARED_GAP",
+      "eligible": null,
+      "label_end": "2025-08-11",
+      "session": "2025-08-07",
+      "split": "train",
+      "status": "INVALID_BOUNDARY",
+      "ticker": "SYN_GAP"
+    },
+    {
+      "availability_status": "VALID",
+      "eligible": null,
+      "label_end": "2025-08-12",
+      "session": "2025-08-08",
+      "split": "train",
+      "status": "INVALID_BOUNDARY",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "INVALID_DECLARED_GAP",
+      "eligible": null,
+      "label_end": "2025-08-12",
+      "session": "2025-08-08",
+      "split": "train",
+      "status": "INVALID_BOUNDARY",
+      "ticker": "SYN_GAP"
+    },
+    {
+      "availability_status": "VALID",
+      "eligible": true,
+      "label_end": "2025-08-13",
+      "session": "2025-08-11",
+      "split": "validation",
+      "status": "VALID",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "INVALID_DECLARED_GAP",
+      "eligible": null,
+      "label_end": "2025-08-13",
+      "session": "2025-08-11",
+      "split": "validation",
+      "status": "VALID",
+      "ticker": "SYN_GAP"
+    },
+    {
+      "availability_status": "VALID",
+      "eligible": true,
+      "label_end": "2025-08-14",
+      "session": "2025-08-12",
+      "split": "validation",
+      "status": "VALID",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "INVALID_DECLARED_GAP",
+      "eligible": null,
+      "label_end": "2025-08-14",
+      "session": "2025-08-12",
+      "split": "validation",
+      "status": "VALID",
+      "ticker": "SYN_GAP"
+    },
+    {
+      "availability_status": "VALID",
+      "eligible": null,
+      "label_end": "2025-08-15",
+      "session": "2025-08-13",
+      "split": "validation",
+      "status": "INVALID_BOUNDARY",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "INVALID_DECLARED_GAP",
+      "eligible": null,
+      "label_end": "2025-08-15",
+      "session": "2025-08-13",
+      "split": "validation",
+      "status": "INVALID_BOUNDARY",
+      "ticker": "SYN_GAP"
+    },
+    {
+      "availability_status": "VALID",
+      "eligible": null,
+      "label_end": "2025-08-18",
+      "session": "2025-08-14",
+      "split": "validation",
+      "status": "INVALID_BOUNDARY",
+      "ticker": "SYN_A"
+    },
+    {
+      "availability_status": "INVALID_DECLARED_GAP",
+      "eligible": null,
+      "label_end": "2025-08-18",
+      "session": "2025-08-14",
+      "split": "validation",
+      "status": "INVALID_BOUNDARY",
+      "ticker": "SYN_GAP"
+    }
+  ],
+  "split_status_counts": {
+    "INVALID_BOUNDARY": 8,
+    "VALID": 12
+  }
+}
